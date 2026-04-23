@@ -14,6 +14,7 @@ import Events from "./pages/Events";
 import Teams from "./pages/Teams";
 import Anonymous from "./pages/Anonymous";
 import Profile from "./pages/Profile";
+import Messages from "./pages/Messages";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -33,6 +34,7 @@ const App = () => (
               <Route path="notes" element={<Notes />} />
               <Route path="events" element={<Events />} />
               <Route path="teams" element={<Teams />} />
+              <Route path="messages" element={<Messages />} />
               <Route path="anonymous" element={<Anonymous />} />
               <Route path="profile" element={<Profile />} />
             </Route>
