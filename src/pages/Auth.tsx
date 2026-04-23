@@ -31,13 +31,21 @@ export default function Auth() {
       passwordSchema.parse(signInData.password);
     } catch (err) {
       if (err instanceof z.ZodError) return toast.error(err.errors[0].message);
+      return toast.error("Invalid input");
     }
     setLoading(true);
-    const { error } = await supabase.auth.signInWithPassword(signInData);
+    const { data, error } = await supabase.auth.signInWithPassword(signInData);
     setLoading(false);
-    if (error) return toast.error(error.message);
-    toast.success("Welcome back!");
-    navigate("/app");
+    if (error) {
+      if (error.message.toLowerCase().includes("invalid")) {
+        return toast.error("Wrong email or password");
+      }
+      return toast.error(error.message);
+    }
+    if (data.session) {
+      toast.success("Welcome back!");
+      navigate("/app");
+    }
   };
 
   const handleSignUp = async (e: React.FormEvent) => {
@@ -48,9 +56,10 @@ export default function Auth() {
       passwordSchema.parse(signUpData.password);
     } catch (err) {
       if (err instanceof z.ZodError) return toast.error(err.errors[0].message);
+      return toast.error("Invalid input");
     }
     setLoading(true);
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email: signUpData.email,
       password: signUpData.password,
       options: {
@@ -60,11 +69,17 @@ export default function Auth() {
     });
     setLoading(false);
     if (error) {
-      if (error.message.includes("already")) return toast.error("Account exists. Try signing in.");
+      if (error.message.toLowerCase().includes("already") || error.message.toLowerCase().includes("registered")) {
+        return toast.error("Account exists. Try signing in.");
+      }
       return toast.error(error.message);
     }
-    toast.success("Account created! Welcome 🎉");
-    navigate("/app");
+    if (data.session) {
+      toast.success("Account created! Welcome 🎉");
+      navigate("/app");
+    } else {
+      toast.success("Check your email to confirm your account 📧", { duration: 6000 });
+    }
   };
 
   const handleGoogle = async () => {
