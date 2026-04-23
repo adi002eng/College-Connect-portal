@@ -74,7 +74,7 @@ export default function Events() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="font-display text-4xl font-bold">🎉 Campus Events</h1>
-          <p className="text-muted-foreground mt-1">Hackathons, fests, workshops & more</p>
+          <p className="text-muted-foreground mt-1">Hackathons, fests, workshops · auto-removed after they happen</p>
         </div>
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>

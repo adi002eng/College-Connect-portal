@@ -8,13 +8,15 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { Loader2, Check, X, Trash2, User as UserIcon } from "lucide-react";
+import { Loader2, Check, X, Trash2, User as UserIcon, MessageSquare } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
+import { useNavigate } from "react-router-dom";
 
 interface Profile { id: string; full_name: string | null; college: string | null; branch: string | null; year: string | null; bio: string | null; avatar_url: string | null; }
 
 export default function Profile() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -164,8 +166,12 @@ export default function Profile() {
                       <Button size="sm" onClick={() => updateAppStatus(r.id, "accepted")} className="bg-success text-success-foreground hover:opacity-90"><Check className="h-4 w-4" /></Button>
                       <Button size="sm" variant="destructive" onClick={() => updateAppStatus(r.id, "rejected")}><X className="h-4 w-4" /></Button>
                     </>
+                  ) : r.status === "accepted" ? (
+                    <Button size="sm" onClick={() => navigate("/app/messages")} className="gradient-primary text-primary-foreground border-0">
+                      <MessageSquare className="h-4 w-4 mr-1" /> Chat
+                    </Button>
                   ) : (
-                    <Badge variant={r.status === "accepted" ? "default" : "secondary"} className={r.status === "accepted" ? "bg-success text-success-foreground" : ""}>{r.status}</Badge>
+                    <Badge variant="secondary">{r.status}</Badge>
                   )}
                 </div>
               </div>
@@ -182,7 +188,13 @@ export default function Profile() {
                 {s.message && <p className="text-sm text-muted-foreground mt-1 line-clamp-2">{s.message}</p>}
                 <div className="text-xs text-muted-foreground mt-1">{formatDistanceToNow(new Date(s.created_at), { addSuffix: true })}</div>
               </div>
-              <Badge variant={s.status === "accepted" ? "default" : s.status === "rejected" ? "destructive" : "secondary"} className={s.status === "accepted" ? "bg-success text-success-foreground" : ""}>{s.status}</Badge>
+              {s.status === "accepted" ? (
+                <Button size="sm" onClick={() => navigate("/app/messages")} className="gradient-primary text-primary-foreground border-0">
+                  <MessageSquare className="h-4 w-4 mr-1" /> Chat
+                </Button>
+              ) : (
+                <Badge variant={s.status === "rejected" ? "destructive" : "secondary"}>{s.status}</Badge>
+              )}
             </div>
           ))}
         </TabsContent>
