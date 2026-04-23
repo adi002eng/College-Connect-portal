@@ -14,7 +14,244 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      anon_answers: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          question_id: string
+          user_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          question_id: string
+          user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          question_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "anon_answers_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "anon_questions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      anon_questions: {
+        Row: {
+          category: string | null
+          content: string
+          created_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          category?: string | null
+          content: string
+          created_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          category?: string | null
+          content?: string
+          created_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      events: {
+        Row: {
+          category: string | null
+          college: string | null
+          created_at: string
+          description: string | null
+          event_date: string | null
+          id: string
+          location: string | null
+          title: string
+          user_id: string
+        }
+        Insert: {
+          category?: string | null
+          college?: string | null
+          created_at?: string
+          description?: string | null
+          event_date?: string | null
+          id?: string
+          location?: string | null
+          title: string
+          user_id: string
+        }
+        Update: {
+          category?: string | null
+          college?: string | null
+          created_at?: string
+          description?: string | null
+          event_date?: string | null
+          id?: string
+          location?: string | null
+          title?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      notes: {
+        Row: {
+          college: string | null
+          created_at: string
+          description: string | null
+          file_name: string | null
+          file_url: string | null
+          id: string
+          subject: string | null
+          title: string
+          user_id: string
+        }
+        Insert: {
+          college?: string | null
+          created_at?: string
+          description?: string | null
+          file_name?: string | null
+          file_url?: string | null
+          id?: string
+          subject?: string | null
+          title: string
+          user_id: string
+        }
+        Update: {
+          college?: string | null
+          created_at?: string
+          description?: string | null
+          file_name?: string | null
+          file_url?: string | null
+          id?: string
+          subject?: string | null
+          title?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          bio: string | null
+          branch: string | null
+          college: string | null
+          created_at: string
+          full_name: string | null
+          id: string
+          updated_at: string
+          year: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          bio?: string | null
+          branch?: string | null
+          college?: string | null
+          created_at?: string
+          full_name?: string | null
+          id: string
+          updated_at?: string
+          year?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          bio?: string | null
+          branch?: string | null
+          college?: string | null
+          created_at?: string
+          full_name?: string | null
+          id?: string
+          updated_at?: string
+          year?: string | null
+        }
+        Relationships: []
+      }
+      team_applications: {
+        Row: {
+          applicant_id: string
+          created_at: string
+          id: string
+          message: string | null
+          status: string
+          team_post_id: string
+        }
+        Insert: {
+          applicant_id: string
+          created_at?: string
+          id?: string
+          message?: string | null
+          status?: string
+          team_post_id: string
+        }
+        Update: {
+          applicant_id?: string
+          created_at?: string
+          id?: string
+          message?: string | null
+          status?: string
+          team_post_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "team_applications_team_post_id_fkey"
+            columns: ["team_post_id"]
+            isOneToOne: false
+            referencedRelation: "team_posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      team_posts: {
+        Row: {
+          college: string | null
+          created_at: string
+          description: string | null
+          id: string
+          project_type: string | null
+          skills_needed: string | null
+          status: string
+          team_size: number | null
+          title: string
+          user_id: string
+        }
+        Insert: {
+          college?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          project_type?: string | null
+          skills_needed?: string | null
+          status?: string
+          team_size?: number | null
+          title: string
+          user_id: string
+        }
+        Update: {
+          college?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          project_type?: string | null
+          skills_needed?: string | null
+          status?: string
+          team_size?: number | null
+          title?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
