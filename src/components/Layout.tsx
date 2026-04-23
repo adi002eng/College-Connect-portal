@@ -1,16 +1,18 @@
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
-import { BookOpen, Calendar, Users, MessageCircleQuestion, User as UserIcon, LogOut, GraduationCap, Menu, X } from "lucide-react";
+import { BookOpen, Calendar, Users, MessageCircleQuestion, User as UserIcon, LogOut, GraduationCap, Menu, X, MessageSquare, Home as HomeIcon } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
+import NotificationBell from "./NotificationBell";
 
 const links = [
-  { to: "/app", label: "Home", icon: GraduationCap, end: true },
+  { to: "/app", label: "Home", icon: HomeIcon, end: true },
   { to: "/app/notes", label: "Notes", icon: BookOpen },
   { to: "/app/events", label: "Events", icon: Calendar },
-  { to: "/app/teams", label: "Team Finder", icon: Users },
-  { to: "/app/anonymous", label: "Anonymous Zone", icon: MessageCircleQuestion },
+  { to: "/app/teams", label: "Teams", icon: Users },
+  { to: "/app/messages", label: "Messages", icon: MessageSquare },
+  { to: "/app/anonymous", label: "Anonymous", icon: MessageCircleQuestion },
   { to: "/app/profile", label: "Profile", icon: UserIcon },
 ];
 
@@ -56,15 +58,19 @@ export default function Layout() {
             ))}
           </nav>
 
-          <div className="hidden lg:block">
+          <div className="hidden lg:flex items-center gap-1">
+            <NotificationBell />
             <Button variant="ghost" size="sm" onClick={handleSignOut}>
               <LogOut className="h-4 w-4 mr-2" /> Sign out
             </Button>
           </div>
 
-          <button className="lg:hidden p-2" onClick={() => setOpen(!open)} aria-label="Menu">
-            {open ? <X /> : <Menu />}
-          </button>
+          <div className="lg:hidden flex items-center gap-1">
+            <NotificationBell />
+            <button className="p-2" onClick={() => setOpen(!open)} aria-label="Menu">
+              {open ? <X /> : <Menu />}
+            </button>
+          </div>
         </div>
 
         {open && (
