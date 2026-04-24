@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Loader2, Send, MessageSquare, ArrowLeft, User as UserIcon } from "lucide-react";
 import { formatDistanceToNow, format } from "date-fns";
 import { toast } from "sonner";
@@ -41,14 +40,23 @@ export default function Messages() {
         supabase.from("profiles").select("id, full_name, avatar_url, college").in("id", otherIds),
         postIds.length ? supabase.from("team_posts").select("id, title").in("id", postIds) : Promise.resolve({ data: [] as any[] }),
       ]);
-      setConvs(data.map((c) => {
+      const hydratedConvs = data.map((c) => {
         const otherId = c.user1_id === user.id ? c.user2_id : c.user1_id;
         return {
           ...c,
           other: profs?.find((p) => p.id === otherId) ?? null,
           post: c.team_post_id ? posts?.find((p) => p.id === c.team_post_id) ?? null : null,
         };
-      }));
+      });
+
+      setConvs(hydratedConvs);
+      setActiveId((current) => {
+        if (current && hydratedConvs.some((c) => c.id === current)) return current;
+        return hydratedConvs[0]?.id ?? null;
+      });
+    } else {
+      setConvs([]);
+      setActiveId(null);
     }
     setLoading(false);
   };
