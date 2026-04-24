@@ -113,14 +113,14 @@ export default function Messages() {
     <div className="h-[calc(100vh-8rem)] bg-card border border-border rounded-2xl overflow-hidden flex">
       {/* Conversation list */}
       <aside className={cn(
-        "w-full md:w-80 border-r border-border flex flex-col",
-        activeId && "hidden md:flex"
+        "w-full md:w-80 border-r border-border flex-col min-h-0",
+        activeId ? "hidden md:flex" : "flex"
       )}>
-        <div className="p-4 border-b border-border">
+        <div className="p-4 border-b border-border shrink-0">
           <h2 className="font-display text-xl font-bold">💬 Messages</h2>
           <p className="text-xs text-muted-foreground mt-1">Chats start when applications are accepted</p>
         </div>
-        <div className="flex-1 overflow-y-auto">
+        <div className="flex-1 overflow-y-auto min-h-0">
           {loading ? (
             <div className="flex justify-center py-12"><Loader2 className="h-6 w-6 animate-spin text-primary" /></div>
           ) : convs.length === 0 ? (
