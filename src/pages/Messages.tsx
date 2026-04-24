@@ -214,9 +214,6 @@ export default function Messages() {
           </>
         )}
       </section>
-          </>
-        )}
-      </section>
     </div>
   );
 }
