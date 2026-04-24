@@ -198,14 +198,16 @@ export default function Messages() {
               })}
             </div>
 
-            <form onSubmit={send} className="p-3 border-t border-border flex gap-2 shrink-0 bg-card">
-              <Input
+            <form onSubmit={send} className="p-3 border-t border-border flex gap-2 shrink-0 bg-card relative z-10">
+              <input
+                type="text"
                 value={text}
                 onChange={(e) => setText(e.target.value)}
                 placeholder="Type a message..."
                 maxLength={2000}
                 autoFocus
-                className="flex-1"
+                disabled={sending}
+                className="flex-1 h-10 rounded-md border border-border bg-muted px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground caret-primary focus:outline-none focus:ring-2 focus:ring-ring"
               />
               <Button type="submit" disabled={sending || !text.trim()} className="gradient-primary text-primary-foreground border-0 shrink-0">
                 {sending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
