@@ -113,14 +113,14 @@ export default function Messages() {
     <div className="h-[calc(100vh-8rem)] bg-card border border-border rounded-2xl overflow-hidden flex">
       {/* Conversation list */}
       <aside className={cn(
-        "w-full md:w-80 border-r border-border flex flex-col",
-        activeId && "hidden md:flex"
+        "w-full md:w-80 border-r border-border flex-col min-h-0",
+        activeId ? "hidden md:flex" : "flex"
       )}>
-        <div className="p-4 border-b border-border">
+        <div className="p-4 border-b border-border shrink-0">
           <h2 className="font-display text-xl font-bold">💬 Messages</h2>
           <p className="text-xs text-muted-foreground mt-1">Chats start when applications are accepted</p>
         </div>
-        <div className="flex-1 overflow-y-auto">
+        <div className="flex-1 overflow-y-auto min-h-0">
           {loading ? (
             <div className="flex justify-center py-12"><Loader2 className="h-6 w-6 animate-spin text-primary" /></div>
           ) : convs.length === 0 ? (
@@ -149,8 +149,8 @@ export default function Messages() {
 
       {/* Chat panel */}
       <section className={cn(
-        "flex-1 flex flex-col",
-        !activeId && "hidden md:flex"
+        "flex-1 flex-col min-h-0 min-w-0",
+        activeId ? "flex" : "hidden md:flex"
       )}>
         {!active ? (
           <div className="flex-1 flex flex-col items-center justify-center text-muted-foreground p-8 text-center">
@@ -159,7 +159,7 @@ export default function Messages() {
           </div>
         ) : (
           <>
-            <header className="p-4 border-b border-border flex items-center gap-3">
+            <header className="p-4 border-b border-border flex items-center gap-3 shrink-0">
               <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setActiveId(null)}>
                 <ArrowLeft className="h-5 w-5" />
               </Button>
@@ -172,7 +172,7 @@ export default function Messages() {
               </div>
             </header>
 
-            <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-2">
+            <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-2 min-h-0">
               {messages.map((m, i) => {
                 const mine = m.sender_id === user?.id;
                 const showTime = i === 0 || (new Date(m.created_at).getTime() - new Date(messages[i-1].created_at).getTime()) > 5*60*1000;
@@ -198,9 +198,16 @@ export default function Messages() {
               })}
             </div>
 
-            <form onSubmit={send} className="p-3 border-t border-border flex gap-2">
-              <Input value={text} onChange={(e) => setText(e.target.value)} placeholder="Type a message..." maxLength={2000} className="flex-1" />
-              <Button type="submit" disabled={sending || !text.trim()} className="gradient-primary text-primary-foreground border-0">
+            <form onSubmit={send} className="p-3 border-t border-border flex gap-2 shrink-0 bg-card">
+              <Input
+                value={text}
+                onChange={(e) => setText(e.target.value)}
+                placeholder="Type a message..."
+                maxLength={2000}
+                autoFocus
+                className="flex-1"
+              />
+              <Button type="submit" disabled={sending || !text.trim()} className="gradient-primary text-primary-foreground border-0 shrink-0">
                 {sending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
               </Button>
             </form>
