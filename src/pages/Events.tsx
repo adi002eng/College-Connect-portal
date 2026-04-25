@@ -11,6 +11,7 @@ import { toast } from "sonner";
 import { Calendar, Plus, MapPin, Loader2, Lock } from "lucide-react";
 import { format } from "date-fns";
 import { useRole } from "@/hooks/useRole";
+import { DeleteButton } from "@/components/DeleteButton";
 
 interface Event {
   id: string; user_id: string; title: string; description: string | null;
@@ -21,7 +22,7 @@ interface Event {
 
 export default function Events() {
   const { user } = useAuth();
-  const { isStaff, isPendingStaff, loading: roleLoading } = useRole();
+  const { isStaff, isPendingStaff, isAdmin, loading: roleLoading } = useRole();
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
@@ -135,8 +136,11 @@ export default function Events() {
                   {e.location && <div className="flex items-center gap-2 text-muted-foreground"><MapPin className="h-4 w-4" />{e.location}</div>}
                   {e.college && <div className="text-xs text-muted-foreground">📍 {e.college}</div>}
                 </div>
-                <div className="text-xs text-muted-foreground border-t border-border/50 pt-3 mt-3">
-                  Posted by {e.profiles?.full_name ?? "Student"}
+                <div className="flex items-center justify-between text-xs text-muted-foreground border-t border-border/50 pt-3 mt-3">
+                  <span>Posted by {e.profiles?.full_name ?? "Student"}</span>
+                  {(e.user_id === user?.id || isAdmin) && (
+                    <DeleteButton table="events" id={e.id} itemLabel="event" onDeleted={load} />
+                  )}
                 </div>
               </div>
             </div>

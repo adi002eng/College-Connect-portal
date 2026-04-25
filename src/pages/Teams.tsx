@@ -10,6 +10,8 @@ import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { Users, Plus, Loader2, Send } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
+import { useRole } from "@/hooks/useRole";
+import { DeleteButton } from "@/components/DeleteButton";
 
 interface TeamPost {
   id: string; user_id: string; title: string; description: string | null;
@@ -21,6 +23,7 @@ interface TeamPost {
 
 export default function Teams() {
   const { user } = useAuth();
+  const { isAdmin } = useRole();
   const [posts, setPosts] = useState<TeamPost[]>([]);
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
@@ -150,6 +153,11 @@ export default function Teams() {
                   )
                 )}
                 {isOwner && <Badge variant="outline" className="w-full justify-center py-2">Your post — manage in Profile</Badge>}
+                {(isOwner || isAdmin) && (
+                  <div className="mt-2 flex justify-end">
+                    <DeleteButton table="team_posts" id={p.id} itemLabel="post" onDeleted={load} label="Delete" variant="ghost" />
+                  </div>
+                )}
               </div>
             );
           })}

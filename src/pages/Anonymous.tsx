@@ -9,6 +9,8 @@ import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { Plus, MessageCircleQuestion, Loader2, Send, Eye } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
+import { useRole } from "@/hooks/useRole";
+import { DeleteButton } from "@/components/DeleteButton";
 
 interface Question {
   id: string; user_id: string; content: string; category: string | null; created_at: string;
@@ -31,6 +33,7 @@ const anonName = (id: string) => {
 
 export default function Anonymous() {
   const { user } = useAuth();
+  const { isAdmin } = useRole();
   const [questions, setQuestions] = useState<Question[]>([]);
   const [answers, setAnswers] = useState<Record<string, Answer[]>>({});
   const [loading, setLoading] = useState(true);
@@ -129,6 +132,9 @@ export default function Anonymous() {
                     <Button variant="ghost" size="sm" onClick={() => setViewing(q)}>
                       <Eye className="h-4 w-4 mr-1.5" /> {(answers[q.id]?.length ?? 0)} {(answers[q.id]?.length ?? 0) === 1 ? "reply" : "replies"}
                     </Button>
+                    {(q.user_id === user?.id || isAdmin) && (
+                      <DeleteButton table="anon_questions" id={q.id} itemLabel="question" onDeleted={load} />
+                    )}
                   </div>
                 </div>
               </div>
@@ -157,6 +163,9 @@ export default function Anonymous() {
                       <div className="text-xs font-semibold mb-0.5">{anonName(a.user_id)}</div>
                       <p className="text-sm whitespace-pre-wrap">{a.content}</p>
                     </div>
+                    {(a.user_id === user?.id || isAdmin) && (
+                      <DeleteButton table="anon_answers" id={a.id} itemLabel="reply" onDeleted={load} />
+                    )}
                   </div>
                 ))}
               </div>
