@@ -107,6 +107,12 @@ export default function Events() {
             </form>
           </DialogContent>
         </Dialog>
+        ) : (
+          <div className="flex items-center gap-2 text-sm text-muted-foreground bg-muted/50 px-4 py-2.5 rounded-xl border border-border">
+            <Lock className="h-4 w-4" />
+            {isPendingStaff ? "Staff verification pending — wait for admin approval to post events." : "Only verified staff can post events."}
+          </div>
+        )}
       </div>
 
       {loading ? (
