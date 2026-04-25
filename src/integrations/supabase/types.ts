@@ -246,6 +246,9 @@ export type Database = {
           created_at: string
           full_name: string | null
           id: string
+          is_banned: boolean
+          role: string | null
+          skills: string | null
           updated_at: string
           year: string | null
         }
@@ -257,6 +260,9 @@ export type Database = {
           created_at?: string
           full_name?: string | null
           id: string
+          is_banned?: boolean
+          role?: string | null
+          skills?: string | null
           updated_at?: string
           year?: string | null
         }
@@ -268,8 +274,44 @@ export type Database = {
           created_at?: string
           full_name?: string | null
           id?: string
+          is_banned?: boolean
+          role?: string | null
+          skills?: string | null
           updated_at?: string
           year?: string | null
+        }
+        Relationships: []
+      }
+      staff_verifications: {
+        Row: {
+          created_at: string
+          id: string
+          note: string | null
+          proof_url: string
+          reviewed_at: string | null
+          reviewer_id: string | null
+          status: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          note?: string | null
+          proof_url: string
+          reviewed_at?: string | null
+          reviewer_id?: string | null
+          status?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          note?: string | null
+          proof_url?: string
+          reviewed_at?: string | null
+          reviewer_id?: string | null
+          status?: string
+          user_id?: string
         }
         Relationships: []
       }
@@ -347,15 +389,50 @@ export type Database = {
         }
         Relationships: []
       }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
+      approve_staff: { Args: { _user_id: string }; Returns: undefined }
+      ban_user: { Args: { _user_id: string }; Returns: undefined }
       cleanup_past_events: { Args: never; Returns: undefined }
+      delete_user_profile: { Args: { _user_id: string }; Returns: undefined }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
+      is_banned: { Args: { _user_id: string }; Returns: boolean }
+      is_verified_staff: { Args: { _user_id: string }; Returns: boolean }
+      reject_staff: { Args: { _user_id: string }; Returns: undefined }
+      unban_user: { Args: { _user_id: string }; Returns: undefined }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "staff" | "student" | "pending_staff" | "banned"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -482,6 +559,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "staff", "student", "pending_staff", "banned"],
+    },
   },
 } as const
