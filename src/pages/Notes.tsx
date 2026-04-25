@@ -10,6 +10,8 @@ import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { BookOpen, Plus, FileText, Download, Search, Loader2 } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
+import { useRole } from "@/hooks/useRole";
+import { DeleteButton } from "@/components/DeleteButton";
 
 interface Note {
   id: string; user_id: string; title: string; description: string | null;
@@ -20,6 +22,7 @@ interface Note {
 
 export default function Notes() {
   const { user } = useAuth();
+  const { isAdmin } = useRole();
   const [notes, setNotes] = useState<Note[]>([]);
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
@@ -128,11 +131,16 @@ export default function Notes() {
                 <span>by {n.profiles?.full_name ?? "Student"}</span>
                 <span>{formatDistanceToNow(new Date(n.created_at), { addSuffix: true })}</span>
               </div>
-              {n.file_url && (
-                <a href={n.file_url} target="_blank" rel="noreferrer" className="mt-3 block">
-                  <Button variant="outline" size="sm" className="w-full"><Download className="h-3.5 w-3.5 mr-2" /> Download</Button>
-                </a>
-              )}
+              <div className="flex items-center gap-2 mt-3">
+                {n.file_url && (
+                  <a href={n.file_url} target="_blank" rel="noreferrer" className="flex-1">
+                    <Button variant="outline" size="sm" className="w-full"><Download className="h-3.5 w-3.5 mr-2" /> Download</Button>
+                  </a>
+                )}
+                {(n.user_id === user?.id || isAdmin) && (
+                  <DeleteButton table="notes" id={n.id} itemLabel="note" onDeleted={load} variant="outline" />
+                )}
+              </div>
             </div>
           ))}
         </div>
