@@ -65,7 +65,38 @@ export default function Profile() {
       setSent(s.map((x) => ({ ...x, post: posts?.find((pp) => pp.id === x.team_post_id) })));
     } else setSent([]);
 
+    // verification request
+    const { data: ver } = await supabase
+      .from("staff_verifications")
+      .select("*")
+      .eq("user_id", user.id)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    setVerification(ver ?? null);
+
     setLoading(false);
+  };
+
+  const submitVerification = async () => {
+    if (!user || !proofFile) return;
+    setSubmittingProof(true);
+    const ext = proofFile.name.split(".").pop() || "bin";
+    const path = `${user.id}/${Date.now()}.${ext}`;
+    const { error: upErr } = await supabase.storage.from("staff-proofs").upload(path, proofFile);
+    if (upErr) {
+      setSubmittingProof(false);
+      return toast.error(upErr.message);
+    }
+    const { error } = await supabase.from("staff_verifications").insert({
+      user_id: user.id,
+      proof_url: path,
+    });
+    setSubmittingProof(false);
+    if (error) return toast.error(error.message);
+    toast.success("Submitted! Admin will review shortly.");
+    setProofFile(null);
+    loadAll();
   };
 
   useEffect(() => { loadAll(); }, [user]);
