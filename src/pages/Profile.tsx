@@ -8,15 +8,21 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { Loader2, Check, X, Trash2, User as UserIcon, MessageSquare } from "lucide-react";
+import { Loader2, Check, X, Trash2, User as UserIcon, MessageSquare, Upload, ShieldCheck } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { useNavigate } from "react-router-dom";
+import { useRole } from "@/hooks/useRole";
+import RoleBadge from "@/components/RoleBadge";
 
-interface Profile { id: string; full_name: string | null; college: string | null; branch: string | null; year: string | null; bio: string | null; avatar_url: string | null; }
+interface Profile { id: string; full_name: string | null; college: string | null; branch: string | null; year: string | null; bio: string | null; avatar_url: string | null; skills?: string | null; }
 
 export default function Profile() {
   const { user } = useAuth();
+  const { primary, isPendingStaff, isStaff } = useRole();
   const navigate = useNavigate();
+  const [verification, setVerification] = useState<any>(null);
+  const [proofFile, setProofFile] = useState<File | null>(null);
+  const [submittingProof, setSubmittingProof] = useState(false);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
