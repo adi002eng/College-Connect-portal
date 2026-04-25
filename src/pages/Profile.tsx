@@ -8,15 +8,21 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { Loader2, Check, X, Trash2, User as UserIcon, MessageSquare } from "lucide-react";
+import { Loader2, Check, X, Trash2, User as UserIcon, MessageSquare, Upload, ShieldCheck } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { useNavigate } from "react-router-dom";
+import { useRole } from "@/hooks/useRole";
+import RoleBadge from "@/components/RoleBadge";
 
-interface Profile { id: string; full_name: string | null; college: string | null; branch: string | null; year: string | null; bio: string | null; avatar_url: string | null; }
+interface Profile { id: string; full_name: string | null; college: string | null; branch: string | null; year: string | null; bio: string | null; avatar_url: string | null; skills?: string | null; }
 
 export default function Profile() {
   const { user } = useAuth();
+  const { primary, isPendingStaff, isStaff } = useRole();
   const navigate = useNavigate();
+  const [verification, setVerification] = useState<any>(null);
+  const [proofFile, setProofFile] = useState<File | null>(null);
+  const [submittingProof, setSubmittingProof] = useState(false);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -59,7 +65,38 @@ export default function Profile() {
       setSent(s.map((x) => ({ ...x, post: posts?.find((pp) => pp.id === x.team_post_id) })));
     } else setSent([]);
 
+    // verification request
+    const { data: ver } = await supabase
+      .from("staff_verifications")
+      .select("*")
+      .eq("user_id", user.id)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    setVerification(ver ?? null);
+
     setLoading(false);
+  };
+
+  const submitVerification = async () => {
+    if (!user || !proofFile) return;
+    setSubmittingProof(true);
+    const ext = proofFile.name.split(".").pop() || "bin";
+    const path = `${user.id}/${Date.now()}.${ext}`;
+    const { error: upErr } = await supabase.storage.from("staff-proofs").upload(path, proofFile);
+    if (upErr) {
+      setSubmittingProof(false);
+      return toast.error(upErr.message);
+    }
+    const { error } = await supabase.from("staff_verifications").insert({
+      user_id: user.id,
+      proof_url: path,
+    });
+    setSubmittingProof(false);
+    if (error) return toast.error(error.message);
+    toast.success("Submitted! Admin will review shortly.");
+    setProofFile(null);
+    loadAll();
   };
 
   useEffect(() => { loadAll(); }, [user]);
@@ -101,9 +138,42 @@ export default function Profile() {
         <div className="flex-1">
           <h1 className="font-display text-3xl font-bold">{profile?.full_name ?? "Your profile"}</h1>
           <p className="text-muted-foreground">{user?.email}</p>
-          {profile?.college && <Badge variant="secondary" className="mt-2">{profile.college}</Badge>}
+          <div className="flex flex-wrap gap-2 mt-2">
+            <RoleBadge role={primary} />
+            {profile?.college && <Badge variant="secondary">{profile.college}</Badge>}
+          </div>
         </div>
       </div>
+
+      {!isStaff && (
+        <div className="bg-card border border-border/50 rounded-2xl p-5 space-y-3">
+          <div className="flex items-center gap-2">
+            <ShieldCheck className="h-5 w-5 text-primary" />
+            <h3 className="font-semibold">Become verified Staff</h3>
+          </div>
+          {verification?.status === "pending" ? (
+            <p className="text-sm text-muted-foreground">
+              ⏳ Your verification request is pending admin review.
+            </p>
+          ) : verification?.status === "rejected" ? (
+            <>
+              <p className="text-sm text-destructive">Your previous request was rejected. You can resubmit with a clearer proof.</p>
+              <Input type="file" accept="image/*,application/pdf" onChange={(e) => setProofFile(e.target.files?.[0] ?? null)} />
+              <Button onClick={submitVerification} disabled={!proofFile || submittingProof} className="gradient-primary text-primary-foreground border-0">
+                {submittingProof ? <Loader2 className="h-4 w-4 animate-spin" /> : <><Upload className="h-4 w-4 mr-2" /> Resubmit proof</>}
+              </Button>
+            </>
+          ) : (
+            <>
+              <p className="text-sm text-muted-foreground">Upload your college ID or staff proof. Once admin approves, you'll be able to post events.</p>
+              <Input type="file" accept="image/*,application/pdf" onChange={(e) => setProofFile(e.target.files?.[0] ?? null)} />
+              <Button onClick={submitVerification} disabled={!proofFile || submittingProof} className="gradient-primary text-primary-foreground border-0">
+                {submittingProof ? <Loader2 className="h-4 w-4 animate-spin" /> : <><Upload className="h-4 w-4 mr-2" /> Submit for verification</>}
+              </Button>
+            </>
+          )}
+        </div>
+      )}
 
       <Tabs defaultValue="info">
         <TabsList className="flex-wrap h-auto">

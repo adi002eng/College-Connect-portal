@@ -8,8 +8,9 @@ import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { Calendar, Plus, MapPin, Loader2 } from "lucide-react";
+import { Calendar, Plus, MapPin, Loader2, Lock } from "lucide-react";
 import { format } from "date-fns";
+import { useRole } from "@/hooks/useRole";
 
 interface Event {
   id: string; user_id: string; title: string; description: string | null;
@@ -20,6 +21,7 @@ interface Event {
 
 export default function Events() {
   const { user } = useAuth();
+  const { isStaff, isPendingStaff, loading: roleLoading } = useRole();
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
@@ -76,6 +78,7 @@ export default function Events() {
           <h1 className="font-display text-4xl font-bold">🎉 Campus Events</h1>
           <p className="text-muted-foreground mt-1">Hackathons, fests, workshops · auto-removed after they happen</p>
         </div>
+        {roleLoading ? null : isStaff ? (
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
             <Button className="gradient-primary text-primary-foreground border-0 h-11"><Plus className="h-4 w-4 mr-2" /> Post event</Button>
@@ -104,6 +107,12 @@ export default function Events() {
             </form>
           </DialogContent>
         </Dialog>
+        ) : (
+          <div className="flex items-center gap-2 text-sm text-muted-foreground bg-muted/50 px-4 py-2.5 rounded-xl border border-border">
+            <Lock className="h-4 w-4" />
+            {isPendingStaff ? "Staff verification pending — wait for admin approval to post events." : "Only verified staff can post events."}
+          </div>
+        )}
       </div>
 
       {loading ? (

@@ -5,14 +5,16 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
-import { GraduationCap, Loader2 } from "lucide-react";
+import { GraduationCap, Loader2, Upload } from "lucide-react";
 import { z } from "zod";
 
 const emailSchema = z.string().trim().email("Invalid email").max(255);
 const passwordSchema = z.string().min(6, "Min 6 characters").max(72);
 const nameSchema = z.string().trim().min(1, "Required").max(100);
+const collegeSchema = z.string().trim().min(2, "College required").max(150);
 
 export default function Auth() {
   const navigate = useNavigate();
@@ -22,7 +24,15 @@ export default function Auth() {
   useEffect(() => { if (user) navigate("/app"); }, [user, navigate]);
 
   const [signInData, setSignInData] = useState({ email: "", password: "" });
-  const [signUpData, setSignUpData] = useState({ name: "", email: "", password: "" });
+  const [signUpData, setSignUpData] = useState({
+    name: "",
+    email: "",
+    password: "",
+    college: "",
+    role: "student" as "student" | "staff",
+    skills: "",
+  });
+  const [proofFile, setProofFile] = useState<File | null>(null);
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -54,9 +64,13 @@ export default function Auth() {
       nameSchema.parse(signUpData.name);
       emailSchema.parse(signUpData.email);
       passwordSchema.parse(signUpData.password);
+      collegeSchema.parse(signUpData.college);
     } catch (err) {
       if (err instanceof z.ZodError) return toast.error(err.errors[0].message);
       return toast.error("Invalid input");
+    }
+    if (signUpData.role === "staff" && !proofFile) {
+      return toast.error("Upload your college ID/proof to apply as Staff");
     }
     setLoading(true);
     const { data, error } = await supabase.auth.signUp({
@@ -64,16 +78,48 @@ export default function Auth() {
       password: signUpData.password,
       options: {
         emailRedirectTo: `${window.location.origin}/app`,
-        data: { full_name: signUpData.name },
+        data: {
+          full_name: signUpData.name,
+          college: signUpData.college,
+          role: signUpData.role,
+          skills: signUpData.skills || null,
+        },
       },
     });
-    setLoading(false);
     if (error) {
+      setLoading(false);
       if (error.message.toLowerCase().includes("already") || error.message.toLowerCase().includes("registered")) {
         return toast.error("Account exists. Try signing in.");
       }
       return toast.error(error.message);
     }
+
+    // If staff & we have a session, upload proof + create verification request
+    if (signUpData.role === "staff" && proofFile && data.user) {
+      // Need a session to upload — sign in if email confirm not required
+      let userId = data.user.id;
+      if (!data.session) {
+        // attempt sign-in to get session for upload (only works if email confirmation off)
+        await supabase.auth.signInWithPassword({
+          email: signUpData.email,
+          password: signUpData.password,
+        });
+      }
+      const ext = proofFile.name.split(".").pop() || "bin";
+      const path = `${userId}/${Date.now()}.${ext}`;
+      const { error: upErr } = await supabase.storage.from("staff-proofs").upload(path, proofFile);
+      if (upErr) {
+        toast.error("Account created, but proof upload failed: " + upErr.message);
+      } else {
+        await supabase.from("staff_verifications").insert({
+          user_id: userId,
+          proof_url: path,
+          note: signUpData.skills || null,
+        });
+      }
+    }
+
+    setLoading(false);
     if (data.session) {
       toast.success("Account created! Welcome 🎉");
       navigate("/app");
@@ -132,17 +178,72 @@ export default function Auth() {
             <TabsContent value="signup">
               <form onSubmit={handleSignUp} className="space-y-4">
                 <div className="space-y-2">
-                  <Label>Full name</Label>
+                  <Label>Full name *</Label>
                   <Input required value={signUpData.name} onChange={(e) => setSignUpData({ ...signUpData, name: e.target.value })} placeholder="Jane Doe" />
                 </div>
                 <div className="space-y-2">
-                  <Label>Email</Label>
+                  <Label>Email *</Label>
                   <Input type="email" required value={signUpData.email} onChange={(e) => setSignUpData({ ...signUpData, email: e.target.value })} placeholder="you@college.edu" />
                 </div>
                 <div className="space-y-2">
-                  <Label>Password</Label>
+                  <Label>Password *</Label>
                   <Input type="password" required value={signUpData.password} onChange={(e) => setSignUpData({ ...signUpData, password: e.target.value })} placeholder="Min 6 characters" />
                 </div>
+                <div className="space-y-2">
+                  <Label>College *</Label>
+                  <Input required value={signUpData.college} onChange={(e) => setSignUpData({ ...signUpData, college: e.target.value })} placeholder="IIT Delhi" />
+                </div>
+                <div className="space-y-2">
+                  <Label>Role *</Label>
+                  <div className="grid grid-cols-2 gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setSignUpData({ ...signUpData, role: "student" })}
+                      className={`p-3 rounded-xl border text-sm font-medium transition-all ${
+                        signUpData.role === "student"
+                          ? "border-primary bg-primary/10 text-primary"
+                          : "border-border hover:bg-muted"
+                      }`}
+                    >
+                      🎓 Student
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setSignUpData({ ...signUpData, role: "staff" })}
+                      className={`p-3 rounded-xl border text-sm font-medium transition-all ${
+                        signUpData.role === "staff"
+                          ? "border-primary bg-primary/10 text-primary"
+                          : "border-border hover:bg-muted"
+                      }`}
+                    >
+                      🛡️ Staff
+                    </button>
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label>Skills (optional)</Label>
+                  <Textarea
+                    maxLength={300}
+                    value={signUpData.skills}
+                    onChange={(e) => setSignUpData({ ...signUpData, skills: e.target.value })}
+                    placeholder="React, Python, UI Design..."
+                    rows={2}
+                  />
+                </div>
+                {signUpData.role === "staff" && (
+                  <div className="space-y-2 p-3 bg-muted/50 rounded-xl border border-border">
+                    <Label className="flex items-center gap-2">
+                      <Upload className="h-4 w-4" /> Upload college ID / staff proof *
+                    </Label>
+                    <Input
+                      type="file"
+                      accept="image/*,application/pdf"
+                      required
+                      onChange={(e) => setProofFile(e.target.files?.[0] ?? null)}
+                    />
+                    <p className="text-xs text-muted-foreground">Reviewed by admin. You'll get the Staff badge once approved.</p>
+                  </div>
+                )}
                 <Button type="submit" disabled={loading} className="w-full gradient-primary text-primary-foreground border-0 h-11">
                   {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Create account"}
                 </Button>

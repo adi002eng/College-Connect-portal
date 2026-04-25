@@ -15,6 +15,7 @@ import Teams from "./pages/Teams";
 import Anonymous from "./pages/Anonymous";
 import Profile from "./pages/Profile";
 import Messages from "./pages/Messages";
+import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -36,6 +37,7 @@ const App = () => (
               <Route path="teams" element={<Teams />} />
               <Route path="messages" element={<Messages />} />
               <Route path="anonymous" element={<Anonymous />} />
+              <Route path="admin" element={<Admin />} />
               <Route path="profile" element={<Profile />} />
             </Route>
             <Route path="*" element={<NotFound />} />
