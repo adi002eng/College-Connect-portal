@@ -1,12 +1,13 @@
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
-import { BookOpen, Calendar, Users, MessageCircleQuestion, User as UserIcon, LogOut, GraduationCap, Menu, X, MessageSquare, Home as HomeIcon } from "lucide-react";
-import { useState } from "react";
+import { BookOpen, Calendar, Users, MessageCircleQuestion, User as UserIcon, LogOut, GraduationCap, Menu, X, MessageSquare, Home as HomeIcon, Shield } from "lucide-react";
+import { useState, useMemo } from "react";
 import { cn } from "@/lib/utils";
 import NotificationBell from "./NotificationBell";
+import { useRole } from "@/hooks/useRole";
 
-const links = [
+const baseLinks = [
   { to: "/app", label: "Home", icon: HomeIcon, end: true },
   { to: "/app/notes", label: "Notes", icon: BookOpen },
   { to: "/app/events", label: "Events", icon: Calendar },
@@ -18,8 +19,13 @@ const links = [
 
 export default function Layout() {
   const { signOut } = useAuth();
+  const { isAdmin } = useRole();
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
+  const links = useMemo(
+    () => (isAdmin ? [...baseLinks, { to: "/app/admin", label: "Admin", icon: Shield }] : baseLinks),
+    [isAdmin]
+  );
 
   const handleSignOut = async () => {
     await signOut();
