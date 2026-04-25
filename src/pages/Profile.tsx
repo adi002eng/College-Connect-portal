@@ -138,9 +138,42 @@ export default function Profile() {
         <div className="flex-1">
           <h1 className="font-display text-3xl font-bold">{profile?.full_name ?? "Your profile"}</h1>
           <p className="text-muted-foreground">{user?.email}</p>
-          {profile?.college && <Badge variant="secondary" className="mt-2">{profile.college}</Badge>}
+          <div className="flex flex-wrap gap-2 mt-2">
+            <RoleBadge role={primary} />
+            {profile?.college && <Badge variant="secondary">{profile.college}</Badge>}
+          </div>
         </div>
       </div>
+
+      {!isStaff && (
+        <div className="bg-card border border-border/50 rounded-2xl p-5 space-y-3">
+          <div className="flex items-center gap-2">
+            <ShieldCheck className="h-5 w-5 text-primary" />
+            <h3 className="font-semibold">Become verified Staff</h3>
+          </div>
+          {verification?.status === "pending" ? (
+            <p className="text-sm text-muted-foreground">
+              ⏳ Your verification request is pending admin review.
+            </p>
+          ) : verification?.status === "rejected" ? (
+            <>
+              <p className="text-sm text-destructive">Your previous request was rejected. You can resubmit with a clearer proof.</p>
+              <Input type="file" accept="image/*,application/pdf" onChange={(e) => setProofFile(e.target.files?.[0] ?? null)} />
+              <Button onClick={submitVerification} disabled={!proofFile || submittingProof} className="gradient-primary text-primary-foreground border-0">
+                {submittingProof ? <Loader2 className="h-4 w-4 animate-spin" /> : <><Upload className="h-4 w-4 mr-2" /> Resubmit proof</>}
+              </Button>
+            </>
+          ) : (
+            <>
+              <p className="text-sm text-muted-foreground">Upload your college ID or staff proof. Once admin approves, you'll be able to post events.</p>
+              <Input type="file" accept="image/*,application/pdf" onChange={(e) => setProofFile(e.target.files?.[0] ?? null)} />
+              <Button onClick={submitVerification} disabled={!proofFile || submittingProof} className="gradient-primary text-primary-foreground border-0">
+                {submittingProof ? <Loader2 className="h-4 w-4 animate-spin" /> : <><Upload className="h-4 w-4 mr-2" /> Submit for verification</>}
+              </Button>
+            </>
+          )}
+        </div>
+      )}
 
       <Tabs defaultValue="info">
         <TabsList className="flex-wrap h-auto">
