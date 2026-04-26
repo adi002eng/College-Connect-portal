@@ -12,7 +12,7 @@ import { GraduationCap, Loader2, Upload } from "lucide-react";
 import { z } from "zod";
 
 const emailSchema = z.string().trim().email("Invalid email").max(255);
-const passwordSchema = z.string().min(4, "Min 4 characters").max(72);
+const passwordSchema = z.string().min(6, "Min 6 characters").max(72);
 const nameSchema = z.string().trim().min(1, "Required").max(100);
 const collegeSchema = z.string().trim().min(2, "College required").max(150);
 
@@ -187,7 +187,7 @@ export default function Auth() {
                 </div>
                 <div className="space-y-2">
                   <Label>Password *</Label>
-                  <Input type="password" required value={signUpData.password} onChange={(e) => setSignUpData({ ...signUpData, password: e.target.value })} placeholder="Min 4 characters" />
+                  <Input type="password" required value={signUpData.password} onChange={(e) => setSignUpData({ ...signUpData, password: e.target.value })} placeholder="Min 6 characters (anything works)" />
                 </div>
                 <div className="space-y-2">
                   <Label>College *</Label>
