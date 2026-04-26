@@ -88,15 +88,17 @@ export default function Auth() {
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
+    const resolvedCollege = collegeChoice === "__other__" ? otherCollege.trim() : collegeChoice;
     try {
       nameSchema.parse(signUpData.name);
       emailSchema.parse(signUpData.email);
       passwordSchema.parse(signUpData.password);
-      collegeSchema.parse(signUpData.college);
+      collegeSchema.parse(resolvedCollege);
     } catch (err) {
       if (err instanceof z.ZodError) return toast.error(err.errors[0].message);
       return toast.error("Invalid input");
     }
+    signUpData.college = resolvedCollege;
     if (signUpData.role === "staff" && !proofFile) {
       return toast.error("Upload your college ID/proof to apply as Staff");
     }
@@ -219,7 +221,37 @@ export default function Auth() {
                 </div>
                 <div className="space-y-2">
                   <Label>College *</Label>
-                  <Input required value={signUpData.college} onChange={(e) => setSignUpData({ ...signUpData, college: e.target.value })} placeholder="IIT Delhi" />
+                  <Select value={collegeChoice} onValueChange={(v) => {
+                    setCollegeChoice(v);
+                    if (v !== "__other__") {
+                      setSignUpData({ ...signUpData, college: v });
+                      setOtherCollege("");
+                    } else {
+                      setSignUpData({ ...signUpData, college: "" });
+                    }
+                  }}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select your college" />
+                    </SelectTrigger>
+                    <SelectContent className="max-h-72">
+                      {COLLEGES.map((c) => (
+                        <SelectItem key={c} value={c}>{c}</SelectItem>
+                      ))}
+                      <SelectItem value="__other__">Other (type below)</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  {collegeChoice === "__other__" && (
+                    <Input
+                      required
+                      maxLength={150}
+                      value={otherCollege}
+                      onChange={(e) => {
+                        setOtherCollege(e.target.value);
+                        setSignUpData({ ...signUpData, college: e.target.value });
+                      }}
+                      placeholder="Enter your college name"
+                    />
+                  )}
                 </div>
                 <div className="space-y-2">
                   <Label>Role *</Label>
