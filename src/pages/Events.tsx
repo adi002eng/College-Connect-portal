@@ -142,34 +142,80 @@ export default function Events() {
       {loading ? (
         <div className="flex justify-center py-16"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>
       ) : events.length === 0 ? (
-        <div className="text-center py-16 text-muted-foreground"><Calendar className="h-12 w-12 mx-auto mb-3 opacity-40" />No events yet</div>
+        <div className="text-center py-20 bg-card border border-dashed border-border rounded-3xl">
+          <div className="h-16 w-16 mx-auto rounded-2xl gradient-accent flex items-center justify-center text-white mb-4 shadow-soft">
+            <Calendar className="h-8 w-8" />
+          </div>
+          <h3 className="font-display text-xl font-semibold mb-1">No events yet</h3>
+          <p className="text-muted-foreground text-sm">Check back soon — campus magic is brewing.</p>
+        </div>
       ) : (
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {events.map((e) => (
-            <div key={e.id} className="bg-card border border-border/50 rounded-2xl overflow-hidden hover:shadow-elevated transition-all hover:-translate-y-0.5">
-              <div className={`h-2 ${catColor(e.category)}`} />
-              <div className="p-5">
-                <div className="flex items-start justify-between mb-2">
-                  <h3 className="font-display text-lg font-semibold line-clamp-2">{e.title}</h3>
-                  {e.category && <Badge variant="secondary">{e.category}</Badge>}
-                </div>
-                {e.description && <p className="text-sm text-muted-foreground mb-3 line-clamp-2">{e.description}</p>}
-                <div className="space-y-1.5 text-sm">
-                  {e.event_date && <div className="flex items-center gap-2 text-foreground"><Calendar className="h-4 w-4 text-primary" />{format(new Date(e.event_date), "PPp")}</div>}
-                  {e.location && <div className="flex items-center gap-2 text-muted-foreground"><MapPin className="h-4 w-4" />{e.location}</div>}
-                  {e.college && <div className="text-xs text-muted-foreground">📍 {e.college}</div>}
-                </div>
-                <div className="flex items-center justify-between text-xs text-muted-foreground border-t border-border/50 pt-3 mt-3">
-                  <span>Posted by {e.profiles?.full_name ?? "Student"}</span>
-                  {(e.user_id === user?.id || isAdmin) && (
-                    <DeleteButton table="events" id={e.id} itemLabel="event" onDeleted={load} />
-                  )}
+          {events.map((e) => {
+            const isUpcoming = e.event_date && new Date(e.event_date) > new Date();
+            return (
+              <div key={e.id} className="group bg-card border border-border/50 rounded-2xl overflow-hidden hover:shadow-elevated hover:border-primary/30 transition-all hover:-translate-y-0.5 flex flex-col">
+                <div className={`h-1.5 ${catColor(e.category)}`} />
+                <div className="p-5 flex flex-col flex-1">
+                  <div className="flex items-start justify-between gap-2 mb-2">
+                    <div className={`h-11 w-11 rounded-xl ${catColor(e.category)} flex items-center justify-center text-white shadow-soft group-hover:scale-110 transition-transform`}>
+                      <Calendar className="h-5 w-5" />
+                    </div>
+                    <div className="flex flex-col items-end gap-1">
+                      {e.category && <Badge variant="secondary">{e.category}</Badge>}
+                      {isUpcoming && <Badge className="bg-success text-success-foreground text-[10px]">Upcoming</Badge>}
+                    </div>
+                  </div>
+                  <h3 className="font-display text-lg font-semibold line-clamp-2 mb-1">{e.title}</h3>
+                  {e.description && <p className="text-sm text-muted-foreground mb-3 line-clamp-2">{e.description}</p>}
+                  <div className="space-y-1.5 text-sm mt-auto">
+                    {e.event_date && (
+                      <div className="flex items-center gap-2 text-foreground">
+                        <Clock className="h-4 w-4 text-primary shrink-0" />
+                        <span className="truncate">{format(new Date(e.event_date), "PPp")}</span>
+                      </div>
+                    )}
+                    {e.location && (
+                      <div className="flex items-center gap-2 text-muted-foreground">
+                        <MapPin className="h-4 w-4 shrink-0" />
+                        <span className="truncate">{e.location}</span>
+                      </div>
+                    )}
+                    {e.college && (
+                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                        <GraduationCap className="h-3.5 w-3.5 shrink-0" />
+                        <span className="truncate">{e.college}</span>
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex items-center justify-between text-xs text-muted-foreground border-t border-border/50 pt-3 mt-3">
+                    <span className="flex items-center gap-1.5">
+                      <span className="h-5 w-5 rounded-full gradient-primary flex items-center justify-center text-white text-[10px] font-semibold">
+                        {(e.profiles?.full_name ?? "S")[0].toUpperCase()}
+                      </span>
+                      {e.profiles?.full_name ?? "Student"}
+                    </span>
+                    {(e.user_id === user?.id || isAdmin) && (
+                      <DeleteButton table="events" id={e.id} itemLabel="event" onDeleted={load} />
+                    )}
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>
   );
 }
+
+function EventStat({ icon: Icon, label, val }: { icon: any; label: string; val: number }) {
+  return (
+    <div className="rounded-2xl bg-white/15 backdrop-blur border border-white/20 px-3 py-2.5 text-center min-w-[80px]">
+      <Icon className="h-4 w-4 mx-auto mb-1 opacity-90" />
+      <div className="font-display text-xl font-bold leading-tight">{val}</div>
+      <div className="text-[10px] uppercase tracking-wide opacity-80">{label}</div>
+    </div>
+  );
+}
+
