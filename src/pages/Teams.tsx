@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { Users, Plus, Loader2, Send } from "lucide-react";
+import { Users, Plus, Loader2, Send, Sparkles, Rocket, Briefcase, Code2 } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { useRole } from "@/hooks/useRole";
 import { DeleteButton } from "@/components/DeleteButton";
@@ -82,12 +82,36 @@ export default function Teams() {
     load();
   };
 
+  const openCount = posts.filter((p) => p.status === "open").length;
+  const totalSpots = posts.reduce((sum, p) => sum + (p.team_size ?? 0), 0);
+  const projectTypes = new Set(posts.map((p) => p.project_type).filter(Boolean)).size;
+
   return (
     <div className="space-y-6">
+      {/* Hero */}
+      <section className="rounded-3xl p-6 md:p-10 text-white relative overflow-hidden shadow-elevated" style={{ background: "linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)))" }}>
+        <div className="absolute -right-12 -top-12 h-56 w-56 rounded-full bg-white/15 blur-3xl" />
+        <div className="absolute -left-10 -bottom-16 h-64 w-64 rounded-full bg-white/10 blur-3xl" />
+        <div className="relative flex flex-col md:flex-row md:items-end justify-between gap-6">
+          <div>
+            <div className="inline-flex items-center gap-2 rounded-full bg-white/20 backdrop-blur px-3 py-1 text-xs font-medium mb-3">
+              <Sparkles className="h-3.5 w-3.5" /> Build something legendary
+            </div>
+            <h1 className="font-display text-4xl md:text-5xl font-bold mb-2">🚀 Team Finder</h1>
+            <p className="text-white/90 max-w-xl">Hackathons, startups, side projects — find the right people to ship with.</p>
+          </div>
+          <div className="grid grid-cols-3 gap-3">
+            <TeamStat icon={Rocket} label="Open" val={openCount} />
+            <TeamStat icon={Users} label="Spots" val={totalSpots} />
+            <TeamStat icon={Briefcase} label="Types" val={projectTypes} />
+          </div>
+        </div>
+      </section>
+
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h1 className="font-display text-4xl font-bold">🚀 Team Finder</h1>
-          <p className="text-muted-foreground mt-1">Find teammates for your next big thing</p>
+        <div className="text-sm text-muted-foreground flex items-center gap-2">
+          <Code2 className="h-4 w-4 text-primary" />
+          {posts.length === 0 ? "No teams posted yet" : `${posts.length} team${posts.length > 1 ? "s" : ""} looking for talent`}
         </div>
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
