@@ -1,12 +1,36 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { BookOpen, Calendar, Users, MessageCircleQuestion, GraduationCap, Sparkles, ArrowRight } from "lucide-react";
+import { BookOpen, Calendar, Users, MessageCircleQuestion, GraduationCap, Sparkles, ArrowRight, Quote, Mail, Github, Twitter, Linkedin, Instagram } from "lucide-react";
 
 const features = [
   { icon: BookOpen, title: "Share Notes", desc: "Upload and download study material across campuses.", grad: "gradient-primary" },
   { icon: Calendar, title: "Discover Events", desc: "Hackathons, fests, workshops — never miss a beat.", grad: "gradient-accent" },
   { icon: Users, title: "Find Your Team", desc: "Build squads for projects, startups & competitions.", grad: "gradient-warm" },
   { icon: MessageCircleQuestion, title: "Anonymous Zone", desc: "Ask anything. Speak freely. Stay anonymous.", grad: "gradient-primary" },
+];
+
+const testimonials = [
+  {
+    name: "Ananya Sharma",
+    role: "CSE Student, WIT Dehradun",
+    quote: "EduSphere helped me find my hackathon team in 2 days. We ended up winning third place at our college fest!",
+    initials: "AS",
+    grad: "gradient-primary",
+  },
+  {
+    name: "Rohan Verma",
+    role: "ECE Student, THDC IHET",
+    quote: "The notes section is gold. I cleared my semester thanks to seniors who shared their handwritten material here.",
+    initials: "RV",
+    grad: "gradient-accent",
+  },
+  {
+    name: "Prof. Meera Joshi",
+    role: "Faculty, Tula's Institute",
+    quote: "Posting events is effortless. My workshop reached students from 6 different colleges within hours.",
+    initials: "MJ",
+    grad: "gradient-warm",
+  },
 ];
 
 export default function Landing() {
