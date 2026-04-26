@@ -7,9 +7,35 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 import { GraduationCap, Loader2, Upload } from "lucide-react";
 import { z } from "zod";
+
+const COLLEGES = [
+  // Government Colleges
+  "Women Institute of Technology, Dehradun",
+  "THDC Institute of Hydropower Engineering & Technology, New Tehri",
+  "Institute of Technology, Gopeshwar",
+  "Dr. A.P.J. Abdul Kalam Institute of Technology, Tanakpur",
+  "Nanhi Pari Seemant Institute of Technology, Pithoragarh",
+  "State Institute of Hotel Management & Catering Technology, New Tehri",
+  "Government Institute of Hotel Management, Dehradun",
+  "Government Polytechnic / Technical Campus Uttarkashi",
+  "Veer Chandra Singh Garhwali Govt. Medical Science & Research Institute, Srinagar",
+  "Government Engineering Campus, Dehradun",
+  // Private Colleges
+  "Tula's Institute",
+  "Shivalik College of Engineering",
+  "Roorkee Institute of Technology",
+  "College of Engineering Roorkee",
+  "GRD Institute of Management and Technology",
+  "Maya Institute of Technology & Management",
+  "JB Institute of Technology",
+  "Nimbus Academy of Management",
+  "Phonics Group of Institutions",
+  "Kukreja Institute of Hotel Management",
+];
 
 const emailSchema = z.string().trim().email("Invalid email").max(255);
 const passwordSchema = z.string().min(6, "Min 6 characters").max(72);
