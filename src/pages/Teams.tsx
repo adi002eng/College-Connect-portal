@@ -144,44 +144,62 @@ export default function Teams() {
       {loading ? (
         <div className="flex justify-center py-16"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>
       ) : posts.length === 0 ? (
-        <div className="text-center py-16 text-muted-foreground"><Users className="h-12 w-12 mx-auto mb-3 opacity-40" />No team posts yet</div>
+        <div className="text-center py-20 bg-card border border-dashed border-border rounded-3xl">
+          <div className="h-16 w-16 mx-auto rounded-2xl gradient-warm flex items-center justify-center text-white mb-4 shadow-soft">
+            <Users className="h-8 w-8" />
+          </div>
+          <h3 className="font-display text-xl font-semibold mb-1">No teams posted yet</h3>
+          <p className="text-muted-foreground text-sm">Got an idea? Post the first one and rally your crew.</p>
+        </div>
       ) : (
         <div className="grid md:grid-cols-2 gap-4">
           {posts.map((p) => {
             const isOwner = p.user_id === user?.id;
             return (
-              <div key={p.id} className="bg-card border border-border/50 rounded-2xl p-6 hover:shadow-elevated transition-all">
-                <div className="flex items-start justify-between mb-3">
-                  <div>
-                    <h3 className="font-display text-xl font-semibold">{p.title}</h3>
+              <div key={p.id} className="group bg-card border border-border/50 rounded-2xl p-6 hover:shadow-elevated hover:border-primary/30 transition-all flex flex-col">
+                <div className="flex items-start gap-3 mb-3">
+                  <div className="h-12 w-12 rounded-xl gradient-warm flex items-center justify-center text-white shadow-soft group-hover:scale-110 transition-transform shrink-0">
+                    <Rocket className="h-6 w-6" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-start justify-between gap-2">
+                      <h3 className="font-display text-xl font-semibold leading-tight">{p.title}</h3>
+                      <Badge className={p.status === "open" ? "bg-success text-success-foreground shrink-0" : "shrink-0"} variant={p.status === "open" ? "default" : "secondary"}>{p.status}</Badge>
+                    </div>
                     <p className="text-xs text-muted-foreground mt-1">by {p.profiles?.full_name ?? "Student"} · {formatDistanceToNow(new Date(p.created_at), { addSuffix: true })}</p>
                   </div>
-                  <Badge className={p.status === "open" ? "bg-success text-success-foreground" : ""} variant={p.status === "open" ? "default" : "secondary"}>{p.status}</Badge>
                 </div>
                 {p.description && <p className="text-sm text-muted-foreground mb-3 line-clamp-3">{p.description}</p>}
                 <div className="flex flex-wrap gap-1.5 mb-4">
                   {p.project_type && <Badge variant="secondary">{p.project_type}</Badge>}
-                  {p.team_size && <Badge variant="outline">{p.team_size} members</Badge>}
-                  {p.college && <Badge variant="outline">{p.college}</Badge>}
+                  {p.team_size && <Badge variant="outline"><Users className="h-3 w-3 mr-1" />{p.team_size} members</Badge>}
+                  {p.college && <Badge variant="outline" className="max-w-[160px] truncate">{p.college}</Badge>}
                 </div>
                 {p.skills_needed && (
-                  <div className="text-sm mb-4"><span className="text-muted-foreground">Skills: </span><span className="font-medium">{p.skills_needed}</span></div>
-                )}
-                {!isOwner && (
-                  p.has_applied ? (
-                    <Button variant="outline" disabled className="w-full">Already applied ✓</Button>
-                  ) : (
-                    <Button onClick={() => setApplyTo(p)} className="w-full gradient-primary text-primary-foreground border-0">
-                      <Send className="h-4 w-4 mr-2" /> Send join request
-                    </Button>
-                  )
-                )}
-                {isOwner && <Badge variant="outline" className="w-full justify-center py-2">Your post — manage in Profile</Badge>}
-                {(isOwner || isAdmin) && (
-                  <div className="mt-2 flex justify-end">
-                    <DeleteButton table="team_posts" id={p.id} itemLabel="post" onDeleted={load} label="Delete" variant="ghost" />
+                  <div className="text-sm mb-4 p-3 rounded-xl bg-muted/50 border border-border/50">
+                    <div className="text-xs uppercase tracking-wide text-muted-foreground font-medium mb-1 flex items-center gap-1.5">
+                      <Code2 className="h-3 w-3" /> Skills needed
+                    </div>
+                    <div className="font-medium">{p.skills_needed}</div>
                   </div>
                 )}
+                <div className="mt-auto">
+                  {!isOwner && (
+                    p.has_applied ? (
+                      <Button variant="outline" disabled className="w-full">Already applied ✓</Button>
+                    ) : (
+                      <Button onClick={() => setApplyTo(p)} className="w-full gradient-primary text-primary-foreground border-0 shadow-soft hover:shadow-glow transition-all">
+                        <Send className="h-4 w-4 mr-2" /> Send join request
+                      </Button>
+                    )
+                  )}
+                  {isOwner && <Badge variant="outline" className="w-full justify-center py-2">Your post — manage in Profile</Badge>}
+                  {(isOwner || isAdmin) && (
+                    <div className="mt-2 flex justify-end">
+                      <DeleteButton table="team_posts" id={p.id} itemLabel="post" onDeleted={load} label="Delete" variant="ghost" />
+                    </div>
+                  )}
+                </div>
               </div>
             );
           })}
