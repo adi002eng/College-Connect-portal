@@ -136,29 +136,44 @@ export default function Notes() {
       {loading ? (
         <div className="flex justify-center py-16"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>
       ) : filtered.length === 0 ? (
-        <div className="text-center py-16 text-muted-foreground">
-          <BookOpen className="h-12 w-12 mx-auto mb-3 opacity-40" />
-          No notes yet. Be the first to share!
+        <div className="text-center py-20 bg-card border border-dashed border-border rounded-3xl">
+          <div className="h-16 w-16 mx-auto rounded-2xl gradient-primary flex items-center justify-center text-white mb-4 shadow-soft">
+            <BookOpen className="h-8 w-8" />
+          </div>
+          <h3 className="font-display text-xl font-semibold mb-1">No notes match your search</h3>
+          <p className="text-muted-foreground text-sm">Try a different keyword, or share the first note for this topic.</p>
         </div>
       ) : (
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
           {filtered.map((n) => (
-            <div key={n.id} className="bg-card border border-border/50 rounded-2xl p-5 hover:shadow-elevated transition-all hover:-translate-y-0.5">
-              <div className="h-12 w-12 rounded-xl gradient-primary flex items-center justify-center text-white mb-3"><FileText className="h-6 w-6" /></div>
+            <div key={n.id} className="group bg-card border border-border/50 rounded-2xl p-5 hover:shadow-elevated hover:border-primary/30 transition-all hover:-translate-y-0.5 flex flex-col">
+              <div className="flex items-start justify-between mb-3">
+                <div className="h-12 w-12 rounded-xl gradient-primary flex items-center justify-center text-white shadow-soft group-hover:scale-110 transition-transform">
+                  <FileText className="h-6 w-6" />
+                </div>
+                {n.file_url && <Badge variant="outline" className="text-[10px]">FILE</Badge>}
+              </div>
               <h3 className="font-display text-lg font-semibold mb-1 line-clamp-2">{n.title}</h3>
               {n.description && <p className="text-sm text-muted-foreground mb-3 line-clamp-2">{n.description}</p>}
               <div className="flex flex-wrap gap-1.5 mb-3">
                 {n.subject && <Badge variant="secondary">{n.subject}</Badge>}
-                {n.college && <Badge variant="outline">{n.college}</Badge>}
+                {n.college && <Badge variant="outline" className="max-w-[180px] truncate">{n.college}</Badge>}
               </div>
-              <div className="flex items-center justify-between text-xs text-muted-foreground border-t border-border/50 pt-3">
-                <span>by {n.profiles?.full_name ?? "Student"}</span>
+              <div className="flex items-center justify-between text-xs text-muted-foreground border-t border-border/50 pt-3 mt-auto">
+                <span className="flex items-center gap-1.5">
+                  <span className="h-5 w-5 rounded-full gradient-accent flex items-center justify-center text-white text-[10px] font-semibold">
+                    {(n.profiles?.full_name ?? "S")[0].toUpperCase()}
+                  </span>
+                  {n.profiles?.full_name ?? "Student"}
+                </span>
                 <span>{formatDistanceToNow(new Date(n.created_at), { addSuffix: true })}</span>
               </div>
               <div className="flex items-center gap-2 mt-3">
                 {n.file_url && (
                   <a href={n.file_url} target="_blank" rel="noreferrer" className="flex-1">
-                    <Button variant="outline" size="sm" className="w-full"><Download className="h-3.5 w-3.5 mr-2" /> Download</Button>
+                    <Button variant="outline" size="sm" className="w-full hover:border-primary/40 hover:text-primary">
+                      <Download className="h-3.5 w-3.5 mr-2" /> Download
+                    </Button>
                   </a>
                 )}
                 {(n.user_id === user?.id || isAdmin) && (
@@ -172,3 +187,14 @@ export default function Notes() {
     </div>
   );
 }
+
+function Stat({ icon: Icon, label, val }: { icon: any; label: string; val: number }) {
+  return (
+    <div className="rounded-2xl bg-white/15 backdrop-blur border border-white/20 px-3 py-2.5 text-center">
+      <Icon className="h-4 w-4 mx-auto mb-1 opacity-90" />
+      <div className="font-display text-xl font-bold leading-tight">{val}</div>
+      <div className="text-[10px] uppercase tracking-wide opacity-80">{label}</div>
+    </div>
+  );
+}
+
