@@ -124,8 +124,122 @@ export default function Landing() {
         </div>
       </section>
 
-      <footer className="container py-10 text-center text-sm text-muted-foreground">
-        © {new Date().getFullYear()} EduSphere — Made with 💜 for students
+      {/* Testimonials */}
+      <section className="container py-20">
+        <div className="text-center mb-14">
+          <div className="inline-flex items-center gap-2 rounded-full bg-muted px-4 py-1.5 text-sm font-medium mb-4">
+            <Quote className="h-4 w-4 text-primary" /> Loved by students & faculty
+          </div>
+          <h2 className="font-display text-4xl md:text-5xl font-bold mb-3">
+            Real stories from <span className="text-gradient">real campuses</span>
+          </h2>
+          <p className="text-muted-foreground max-w-xl mx-auto">
+            Hear what students and educators across India are saying about EduSphere.
+          </p>
+        </div>
+
+        <div className="grid md:grid-cols-3 gap-6">
+          {testimonials.map((t) => (
+            <div
+              key={t.name}
+              className="group p-7 rounded-3xl bg-card border border-border/50 hover:border-primary/30 shadow-sm hover:shadow-elevated transition-all hover:-translate-y-1 flex flex-col"
+            >
+              <Quote className="h-8 w-8 text-primary/40 mb-4" />
+              <p className="text-foreground/90 leading-relaxed mb-6 flex-1">"{t.quote}"</p>
+              <div className="flex items-center gap-3 pt-4 border-t border-border/50">
+                <div className={`h-11 w-11 rounded-full ${t.grad} flex items-center justify-center text-white font-semibold shadow-soft`}>
+                  {t.initials}
+                </div>
+                <div>
+                  <div className="font-semibold text-sm">{t.name}</div>
+                  <div className="text-xs text-muted-foreground">{t.role}</div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="border-t border-border/50 bg-muted/30 mt-10">
+        <div className="container py-14">
+          <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-4">
+            <div>
+              <div className="flex items-center gap-2 font-display font-bold text-lg mb-3">
+                <div className="h-9 w-9 rounded-xl gradient-hero flex items-center justify-center text-white">
+                  <GraduationCap className="h-5 w-5" />
+                </div>
+                <span className="text-gradient">EduSphere</span>
+              </div>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                Bridging campuses across India. Connect, collaborate and grow with students from every college.
+              </p>
+              <div className="flex gap-2 mt-4">
+                {[
+                  { icon: Twitter, href: "#" },
+                  { icon: Instagram, href: "#" },
+                  { icon: Linkedin, href: "#" },
+                  { icon: Github, href: "#" },
+                ].map((s, i) => (
+                  <a
+                    key={i}
+                    href={s.href}
+                    className="h-9 w-9 rounded-lg bg-card border border-border/50 flex items-center justify-center text-muted-foreground hover:text-primary hover:border-primary/40 transition-all"
+                    aria-label="Social link"
+                  >
+                    <s.icon className="h-4 w-4" />
+                  </a>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <h4 className="font-display font-semibold mb-4">Explore</h4>
+              <ul className="space-y-2.5 text-sm">
+                <li><Link to="/auth" className="text-muted-foreground hover:text-primary transition-colors">Notes</Link></li>
+                <li><Link to="/auth" className="text-muted-foreground hover:text-primary transition-colors">Events</Link></li>
+                <li><Link to="/auth" className="text-muted-foreground hover:text-primary transition-colors">Team Finder</Link></li>
+                <li><Link to="/auth" className="text-muted-foreground hover:text-primary transition-colors">Anonymous Zone</Link></li>
+                <li><Link to="/auth" className="text-muted-foreground hover:text-primary transition-colors">Messages</Link></li>
+              </ul>
+            </div>
+
+            <div>
+              <h4 className="font-display font-semibold mb-4">Company</h4>
+              <ul className="space-y-2.5 text-sm">
+                <li><a href="#" className="text-muted-foreground hover:text-primary transition-colors">About us</a></li>
+                <li><a href="#" className="text-muted-foreground hover:text-primary transition-colors">Careers</a></li>
+                <li><a href="#" className="text-muted-foreground hover:text-primary transition-colors">Blog</a></li>
+                <li><a href="#" className="text-muted-foreground hover:text-primary transition-colors">Contact</a></li>
+                <li><a href="#" className="text-muted-foreground hover:text-primary transition-colors">For Colleges</a></li>
+              </ul>
+            </div>
+
+            <div>
+              <h4 className="font-display font-semibold mb-4">Resources</h4>
+              <ul className="space-y-2.5 text-sm">
+                <li><a href="#" className="text-muted-foreground hover:text-primary transition-colors">Help Center</a></li>
+                <li><a href="#" className="text-muted-foreground hover:text-primary transition-colors">Community Guidelines</a></li>
+                <li><a href="#" className="text-muted-foreground hover:text-primary transition-colors">Privacy Policy</a></li>
+                <li><a href="#" className="text-muted-foreground hover:text-primary transition-colors">Terms of Service</a></li>
+                <li>
+                  <a href="mailto:hello@edusphere.app" className="text-muted-foreground hover:text-primary transition-colors inline-flex items-center gap-1.5">
+                    <Mail className="h-3.5 w-3.5" /> hello@edusphere.app
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <div className="mt-12 pt-6 border-t border-border/50 flex flex-col md:flex-row items-center justify-between gap-3 text-sm text-muted-foreground">
+            <div>© {new Date().getFullYear()} EduSphere — Made with 💜 for students</div>
+            <div className="flex gap-5">
+              <a href="#" className="hover:text-primary transition-colors">Privacy</a>
+              <a href="#" className="hover:text-primary transition-colors">Terms</a>
+              <a href="#" className="hover:text-primary transition-colors">Cookies</a>
+            </div>
+          </div>
+        </div>
       </footer>
     </div>
   );
