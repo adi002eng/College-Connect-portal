@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { BookOpen, Plus, FileText, Download, Search, Loader2 } from "lucide-react";
+import { BookOpen, Plus, FileText, Download, Search, Loader2, Sparkles, GraduationCap, FolderOpen, User } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { useRole } from "@/hooks/useRole";
 import { DeleteButton } from "@/components/DeleteButton";
@@ -75,12 +75,36 @@ export default function Notes() {
     return !q || n.title.toLowerCase().includes(q) || (n.subject ?? "").toLowerCase().includes(q) || (n.college ?? "").toLowerCase().includes(q);
   });
 
+  const uniqueSubjects = new Set(notes.map((n) => n.subject).filter(Boolean)).size;
+  const uniqueColleges = new Set(notes.map((n) => n.college).filter(Boolean)).size;
+  const uniqueContributors = new Set(notes.map((n) => n.user_id)).size;
+
   return (
     <div className="space-y-6">
+      {/* Hero banner */}
+      <section className="rounded-3xl gradient-primary p-6 md:p-10 text-white relative overflow-hidden shadow-elevated">
+        <div className="absolute -right-12 -top-12 h-56 w-56 rounded-full bg-white/15 blur-3xl" />
+        <div className="absolute -left-10 -bottom-16 h-64 w-64 rounded-full bg-white/10 blur-3xl" />
+        <div className="relative flex flex-col md:flex-row md:items-end justify-between gap-6">
+          <div>
+            <div className="inline-flex items-center gap-2 rounded-full bg-white/20 backdrop-blur px-3 py-1 text-xs font-medium mb-3">
+              <Sparkles className="h-3.5 w-3.5" /> Study smarter, together
+            </div>
+            <h1 className="font-display text-4xl md:text-5xl font-bold mb-2">📚 Notes Library</h1>
+            <p className="text-white/90 max-w-xl">Curated study material shared by students across every campus.</p>
+          </div>
+          <div className="grid grid-cols-3 gap-3 md:gap-4">
+            <Stat icon={FileText} label="Notes" val={notes.length} />
+            <Stat icon={FolderOpen} label="Subjects" val={uniqueSubjects} />
+            <Stat icon={User} label="Sharers" val={uniqueContributors} />
+          </div>
+        </div>
+      </section>
+
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h1 className="font-display text-4xl font-bold">📚 Notes Library</h1>
-          <p className="text-muted-foreground mt-1">Study material shared by students across colleges</p>
+        <div className="text-sm text-muted-foreground flex items-center gap-2">
+          <GraduationCap className="h-4 w-4 text-primary" />
+          {uniqueColleges > 0 ? `Material from ${uniqueColleges} college${uniqueColleges > 1 ? "s" : ""}` : "Be the first to contribute"}
         </div>
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
