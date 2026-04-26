@@ -325,3 +325,17 @@ const Row = ({ title, sub, date, onDelete }: { title: string; sub?: string | nul
     <Button size="sm" variant="ghost" onClick={onDelete}><Trash2 className="h-4 w-4 text-destructive" /></Button>
   </div>
 );
+
+function ProfileStat({ icon: Icon, label, val, grad }: { icon: any; label: string; val: number; grad: string }) {
+  return (
+    <div className="bg-card border border-border/50 rounded-2xl p-4 flex items-center gap-3 hover:shadow-elevated transition-all">
+      <div className={`h-11 w-11 rounded-xl ${grad} flex items-center justify-center text-white shadow-soft shrink-0`}>
+        <Icon className="h-5 w-5" />
+      </div>
+      <div className="min-w-0">
+        <div className="font-display text-2xl font-bold leading-none">{val}</div>
+        <div className="text-xs text-muted-foreground mt-1 truncate">{label}</div>
+      </div>
+    </div>
+  );
+}
