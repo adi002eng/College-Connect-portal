@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { Loader2, Check, X, Trash2, User as UserIcon, MessageSquare, Upload, ShieldCheck } from "lucide-react";
+import { Loader2, Check, X, Trash2, User as UserIcon, MessageSquare, Upload, ShieldCheck, Mail, GraduationCap, Sparkles, FileText, Calendar, Users as UsersIcon, Send, Inbox } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { useNavigate } from "react-router-dom";
 import { useRole } from "@/hooks/useRole";
@@ -129,21 +129,60 @@ export default function Profile() {
 
   if (loading) return <div className="flex justify-center py-20"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>;
 
+  const filledFields = [profile?.full_name, profile?.college, profile?.branch, profile?.year, profile?.bio].filter(Boolean).length;
+  const completion = Math.round((filledFields / 5) * 100);
+
   return (
     <div className="space-y-6">
-      <div className="flex flex-col md:flex-row gap-6 items-start">
-        <div className="h-24 w-24 rounded-3xl gradient-hero flex items-center justify-center text-white shadow-elevated shrink-0">
-          {profile?.avatar_url ? <img src={profile.avatar_url} alt="" className="h-full w-full object-cover rounded-3xl" /> : <UserIcon className="h-10 w-10" />}
+      {/* Profile banner */}
+      <section className="rounded-3xl overflow-hidden border border-border/50 shadow-elevated bg-card">
+        <div className="h-32 md:h-40 gradient-hero relative">
+          <div className="absolute -right-10 -top-10 h-44 w-44 rounded-full bg-white/15 blur-3xl" />
+          <div className="absolute -left-10 -bottom-10 h-44 w-44 rounded-full bg-white/10 blur-3xl" />
         </div>
-        <div className="flex-1">
-          <h1 className="font-display text-3xl font-bold">{profile?.full_name ?? "Your profile"}</h1>
-          <p className="text-muted-foreground">{user?.email}</p>
-          <div className="flex flex-wrap gap-2 mt-2">
-            <RoleBadge role={primary} />
-            {profile?.college && <Badge variant="secondary">{profile.college}</Badge>}
+        <div className="px-6 md:px-8 pb-6 -mt-12 md:-mt-14">
+          <div className="flex flex-col md:flex-row md:items-end gap-5">
+            <div className="h-24 w-24 md:h-28 md:w-28 rounded-3xl gradient-hero ring-4 ring-card flex items-center justify-center text-white shadow-elevated shrink-0">
+              {profile?.avatar_url ? (
+                <img src={profile.avatar_url} alt="" className="h-full w-full object-cover rounded-3xl" />
+              ) : (
+                <span className="font-display text-4xl font-bold">{(profile?.full_name ?? user?.email ?? "U")[0].toUpperCase()}</span>
+              )}
+            </div>
+            <div className="flex-1 min-w-0 mt-2 md:mt-0 md:pb-2">
+              <h1 className="font-display text-3xl font-bold truncate">{profile?.full_name ?? "Your profile"}</h1>
+              <div className="flex items-center gap-1.5 text-sm text-muted-foreground mt-0.5">
+                <Mail className="h-3.5 w-3.5" /> <span className="truncate">{user?.email}</span>
+              </div>
+              <div className="flex flex-wrap gap-2 mt-3">
+                <RoleBadge role={primary} />
+                {profile?.college && <Badge variant="secondary" className="max-w-[260px] truncate"><GraduationCap className="h-3 w-3 mr-1" />{profile.college}</Badge>}
+                {profile?.branch && <Badge variant="outline">{profile.branch}</Badge>}
+                {profile?.year && <Badge variant="outline">{profile.year}</Badge>}
+              </div>
+            </div>
+            <div className="md:pb-2 md:text-right">
+              <div className="text-xs uppercase tracking-wide text-muted-foreground mb-1.5 flex items-center gap-1.5 md:justify-end">
+                <Sparkles className="h-3 w-3" /> Profile completion
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="h-2 w-32 rounded-full bg-muted overflow-hidden">
+                  <div className="h-full gradient-primary transition-all" style={{ width: `${completion}%` }} />
+                </div>
+                <span className="font-display font-bold text-sm">{completion}%</span>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
+      </section>
+
+      {/* Quick stats */}
+      <section className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <ProfileStat icon={FileText} label="Notes" val={myNotes.length} grad="gradient-primary" />
+        <ProfileStat icon={Calendar} label="Events" val={myEvents.length} grad="gradient-accent" />
+        <ProfileStat icon={UsersIcon} label="Teams" val={myTeams.length} grad="gradient-warm" />
+        <ProfileStat icon={Inbox} label="Requests" val={received.length} grad="gradient-primary" />
+      </section>
 
       {!isStaff && (
         <div className="bg-card border border-border/50 rounded-2xl p-5 space-y-3">
@@ -286,3 +325,17 @@ const Row = ({ title, sub, date, onDelete }: { title: string; sub?: string | nul
     <Button size="sm" variant="ghost" onClick={onDelete}><Trash2 className="h-4 w-4 text-destructive" /></Button>
   </div>
 );
+
+function ProfileStat({ icon: Icon, label, val, grad }: { icon: any; label: string; val: number; grad: string }) {
+  return (
+    <div className="bg-card border border-border/50 rounded-2xl p-4 flex items-center gap-3 hover:shadow-elevated transition-all">
+      <div className={`h-11 w-11 rounded-xl ${grad} flex items-center justify-center text-white shadow-soft shrink-0`}>
+        <Icon className="h-5 w-5" />
+      </div>
+      <div className="min-w-0">
+        <div className="font-display text-2xl font-bold leading-none">{val}</div>
+        <div className="text-xs text-muted-foreground mt-1 truncate">{label}</div>
+      </div>
+    </div>
+  );
+}

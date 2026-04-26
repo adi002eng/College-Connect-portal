@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { Plus, MessageCircleQuestion, Loader2, Send, Eye } from "lucide-react";
+import { Plus, MessageCircleQuestion, Loader2, Send, Eye, Shield, Sparkles, MessageSquare } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { useRole } from "@/hooks/useRole";
 import { DeleteButton } from "@/components/DeleteButton";
@@ -42,6 +42,9 @@ export default function Anonymous() {
   const [form, setForm] = useState({ content: "", category: "General" });
   const [viewing, setViewing] = useState<Question | null>(null);
   const [reply, setReply] = useState("");
+  const [activeCat, setActiveCat] = useState<string>("All");
+
+  const CATEGORIES = ["All", "General", "Academics", "Career", "Mental Health", "Relationships", "Confessions"];
 
   const load = async () => {
     setLoading(true);
@@ -81,12 +84,41 @@ export default function Anonymous() {
     load();
   };
 
+  const totalReplies = Object.values(answers).reduce((sum, a) => sum + a.length, 0);
+  const filteredQs = activeCat === "All" ? questions : questions.filter((q) => (q.category ?? "General") === activeCat);
+
   return (
     <div className="space-y-6">
+      {/* Hero */}
+      <section className="rounded-3xl p-6 md:p-10 text-white relative overflow-hidden shadow-elevated" style={{ background: "linear-gradient(135deg, hsl(var(--secondary)), hsl(var(--primary)))" }}>
+        <div className="absolute -right-12 -top-12 h-56 w-56 rounded-full bg-white/15 blur-3xl" />
+        <div className="absolute -left-10 -bottom-16 h-64 w-64 rounded-full bg-white/10 blur-3xl" />
+        <div className="relative flex flex-col md:flex-row md:items-end justify-between gap-6">
+          <div>
+            <div className="inline-flex items-center gap-2 rounded-full bg-white/20 backdrop-blur px-3 py-1 text-xs font-medium mb-3">
+              <Shield className="h-3.5 w-3.5" /> 100% anonymous · zero judgment
+            </div>
+            <h1 className="font-display text-4xl md:text-5xl font-bold mb-2">🎭 Anonymous Zone</h1>
+            <p className="text-white/90 max-w-xl">Speak freely. Your identity stays hidden behind a friendly animal avatar.</p>
+          </div>
+          <div className="flex gap-3">
+            <div className="rounded-2xl bg-white/15 backdrop-blur border border-white/20 px-4 py-3 text-center min-w-[90px]">
+              <MessageCircleQuestion className="h-4 w-4 mx-auto mb-1 opacity-90" />
+              <div className="font-display text-2xl font-bold leading-tight">{questions.length}</div>
+              <div className="text-[10px] uppercase tracking-wide opacity-80">Questions</div>
+            </div>
+            <div className="rounded-2xl bg-white/15 backdrop-blur border border-white/20 px-4 py-3 text-center min-w-[90px]">
+              <MessageSquare className="h-4 w-4 mx-auto mb-1 opacity-90" />
+              <div className="font-display text-2xl font-bold leading-tight">{totalReplies}</div>
+              <div className="text-[10px] uppercase tracking-wide opacity-80">Replies</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h1 className="font-display text-4xl font-bold">🎭 Anonymous Zone</h1>
-          <p className="text-muted-foreground mt-1">Ask anything. No names. No judgment.</p>
+        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <Sparkles className="h-4 w-4 text-primary" /> A safe space — be kind, stay real.
         </div>
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
@@ -111,35 +143,69 @@ export default function Anonymous() {
         </Dialog>
       </div>
 
+      {/* Category filter chips */}
+      <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1">
+        {CATEGORIES.map((c) => {
+          const count = c === "All" ? questions.length : questions.filter((q) => (q.category ?? "General") === c).length;
+          const active = activeCat === c;
+          return (
+            <button
+              key={c}
+              onClick={() => setActiveCat(c)}
+              className={`shrink-0 px-3.5 py-1.5 rounded-full text-sm font-medium border transition-all ${
+                active
+                  ? "gradient-primary text-primary-foreground border-transparent shadow-soft"
+                  : "bg-card text-muted-foreground border-border/50 hover:border-primary/40 hover:text-foreground"
+              }`}
+            >
+              {c} <span className={`ml-1 text-xs ${active ? "opacity-90" : "opacity-60"}`}>{count}</span>
+            </button>
+          );
+        })}
+      </div>
+
       {loading ? (
         <div className="flex justify-center py-16"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>
-      ) : questions.length === 0 ? (
-        <div className="text-center py-16 text-muted-foreground"><MessageCircleQuestion className="h-12 w-12 mx-auto mb-3 opacity-40" />Be the first to ask</div>
+      ) : filteredQs.length === 0 ? (
+        <div className="text-center py-20 bg-card border border-dashed border-border rounded-3xl">
+          <div className="h-16 w-16 mx-auto rounded-2xl gradient-primary flex items-center justify-center text-white mb-4 shadow-soft">
+            <MessageCircleQuestion className="h-8 w-8" />
+          </div>
+          <h3 className="font-display text-xl font-semibold mb-1">Nothing here yet</h3>
+          <p className="text-muted-foreground text-sm">Be the first to start the conversation in {activeCat === "All" ? "this zone" : activeCat}.</p>
+        </div>
       ) : (
         <div className="space-y-3">
-          {questions.map((q) => (
-            <div key={q.id} className="bg-card border border-border/50 rounded-2xl p-5 hover:shadow-soft transition-all">
-              <div className="flex items-start gap-3">
-                <div className="h-12 w-12 rounded-2xl gradient-card flex items-center justify-center text-2xl shrink-0">{anonAvatar(q.user_id)}</div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-1 flex-wrap">
-                    <span className="font-semibold text-sm">{anonName(q.user_id)}</span>
-                    {q.category && <Badge variant="secondary" className="text-xs">{q.category}</Badge>}
-                    <span className="text-xs text-muted-foreground">{formatDistanceToNow(new Date(q.created_at), { addSuffix: true })}</span>
-                  </div>
-                  <p className="text-foreground whitespace-pre-wrap break-words">{q.content}</p>
-                  <div className="flex items-center gap-3 mt-3">
-                    <Button variant="ghost" size="sm" onClick={() => setViewing(q)}>
-                      <Eye className="h-4 w-4 mr-1.5" /> {(answers[q.id]?.length ?? 0)} {(answers[q.id]?.length ?? 0) === 1 ? "reply" : "replies"}
-                    </Button>
-                    {(q.user_id === user?.id || isAdmin) && (
-                      <DeleteButton table="anon_questions" id={q.id} itemLabel="question" onDeleted={load} />
-                    )}
+          {filteredQs.map((q) => {
+            const replyCount = answers[q.id]?.length ?? 0;
+            return (
+              <div key={q.id} className="group bg-card border border-border/50 rounded-2xl p-5 hover:shadow-elevated hover:border-primary/30 transition-all">
+                <div className="flex items-start gap-3">
+                  <div className="h-12 w-12 rounded-2xl gradient-card flex items-center justify-center text-2xl shrink-0 shadow-soft group-hover:scale-105 transition-transform">{anonAvatar(q.user_id)}</div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-1.5 flex-wrap">
+                      <span className="font-semibold text-sm">{anonName(q.user_id)}</span>
+                      {q.category && <Badge variant="secondary" className="text-xs">{q.category}</Badge>}
+                      <span className="text-xs text-muted-foreground">· {formatDistanceToNow(new Date(q.created_at), { addSuffix: true })}</span>
+                    </div>
+                    <p className="text-foreground whitespace-pre-wrap break-words leading-relaxed">{q.content}</p>
+                    <div className="flex items-center gap-3 mt-3 pt-3 border-t border-border/50">
+                      <Button variant="ghost" size="sm" onClick={() => setViewing(q)} className="hover:text-primary">
+                        <MessageSquare className="h-4 w-4 mr-1.5" />
+                        {replyCount} {replyCount === 1 ? "reply" : "replies"}
+                      </Button>
+                      <Button variant="ghost" size="sm" onClick={() => setViewing(q)} className="text-muted-foreground hover:text-foreground">
+                        <Eye className="h-4 w-4 mr-1.5" /> Open
+                      </Button>
+                      {(q.user_id === user?.id || isAdmin) && (
+                        <div className="ml-auto"><DeleteButton table="anon_questions" id={q.id} itemLabel="question" onDeleted={load} /></div>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
 
