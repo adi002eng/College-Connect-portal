@@ -18,7 +18,7 @@ export default function Landing() {
           <div className="h-10 w-10 rounded-2xl gradient-hero flex items-center justify-center text-white shadow-soft">
             <GraduationCap className="h-6 w-6" />
           </div>
-          <span className="text-gradient">CollegeConnect</span>
+          <span className="text-gradient">EduSphere</span>
         </div>
         <div className="flex gap-2">
           <Link to="/auth"><Button variant="ghost">Sign in</Button></Link>
@@ -101,7 +101,7 @@ export default function Landing() {
       </section>
 
       <footer className="container py-10 text-center text-sm text-muted-foreground">
-        © {new Date().getFullYear()} CollegeConnect — Made with 💜 for students
+        © {new Date().getFullYear()} EduSphere — Made with 💜 for students
       </footer>
     </div>
   );

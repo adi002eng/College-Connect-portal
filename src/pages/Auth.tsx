@@ -149,7 +149,7 @@ export default function Auth() {
           <div className="h-11 w-11 rounded-2xl gradient-hero flex items-center justify-center text-white shadow-soft">
             <GraduationCap className="h-6 w-6" />
           </div>
-          <span className="text-gradient">CollegeConnect</span>
+          <span className="text-gradient">EduSphere</span>
         </Link>
 
         <div className="bg-card border border-border/50 rounded-3xl p-8 shadow-elevated">

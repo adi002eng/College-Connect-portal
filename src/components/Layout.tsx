@@ -40,7 +40,7 @@ export default function Layout() {
             <div className="h-9 w-9 rounded-xl gradient-hero flex items-center justify-center text-white">
               <GraduationCap className="h-5 w-5" />
             </div>
-            <span className="text-gradient">CollegeConnect</span>
+            <span className="text-gradient">EduSphere</span>
           </NavLink>
 
           <nav className="hidden lg:flex items-center gap-1">
@@ -64,16 +64,12 @@ export default function Layout() {
             ))}
           </nav>
 
-          <div className="hidden lg:flex items-center gap-1">
+          <div className="flex items-center gap-1">
             <NotificationBell />
-            <Button variant="ghost" size="sm" onClick={handleSignOut}>
+            <Button variant="ghost" size="sm" onClick={handleSignOut} className="hidden lg:inline-flex">
               <LogOut className="h-4 w-4 mr-2" /> Sign out
             </Button>
-          </div>
-
-          <div className="lg:hidden flex items-center gap-1">
-            <NotificationBell />
-            <button className="p-2" onClick={() => setOpen(!open)} aria-label="Menu">
+            <button className="p-2 lg:hidden" onClick={() => setOpen(!open)} aria-label="Menu">
               {open ? <X /> : <Menu />}
             </button>
           </div>
