@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { Plus, MessageCircleQuestion, Loader2, Send, Eye } from "lucide-react";
+import { Plus, MessageCircleQuestion, Loader2, Send, Eye, Shield, Sparkles, MessageSquare } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { useRole } from "@/hooks/useRole";
 import { DeleteButton } from "@/components/DeleteButton";
@@ -42,6 +42,9 @@ export default function Anonymous() {
   const [form, setForm] = useState({ content: "", category: "General" });
   const [viewing, setViewing] = useState<Question | null>(null);
   const [reply, setReply] = useState("");
+  const [activeCat, setActiveCat] = useState<string>("All");
+
+  const CATEGORIES = ["All", "General", "Academics", "Career", "Mental Health", "Relationships", "Confessions"];
 
   const load = async () => {
     setLoading(true);
@@ -81,12 +84,41 @@ export default function Anonymous() {
     load();
   };
 
+  const totalReplies = Object.values(answers).reduce((sum, a) => sum + a.length, 0);
+  const filteredQs = activeCat === "All" ? questions : questions.filter((q) => (q.category ?? "General") === activeCat);
+
   return (
     <div className="space-y-6">
+      {/* Hero */}
+      <section className="rounded-3xl p-6 md:p-10 text-white relative overflow-hidden shadow-elevated" style={{ background: "linear-gradient(135deg, hsl(var(--secondary)), hsl(var(--primary)))" }}>
+        <div className="absolute -right-12 -top-12 h-56 w-56 rounded-full bg-white/15 blur-3xl" />
+        <div className="absolute -left-10 -bottom-16 h-64 w-64 rounded-full bg-white/10 blur-3xl" />
+        <div className="relative flex flex-col md:flex-row md:items-end justify-between gap-6">
+          <div>
+            <div className="inline-flex items-center gap-2 rounded-full bg-white/20 backdrop-blur px-3 py-1 text-xs font-medium mb-3">
+              <Shield className="h-3.5 w-3.5" /> 100% anonymous · zero judgment
+            </div>
+            <h1 className="font-display text-4xl md:text-5xl font-bold mb-2">🎭 Anonymous Zone</h1>
+            <p className="text-white/90 max-w-xl">Speak freely. Your identity stays hidden behind a friendly animal avatar.</p>
+          </div>
+          <div className="flex gap-3">
+            <div className="rounded-2xl bg-white/15 backdrop-blur border border-white/20 px-4 py-3 text-center min-w-[90px]">
+              <MessageCircleQuestion className="h-4 w-4 mx-auto mb-1 opacity-90" />
+              <div className="font-display text-2xl font-bold leading-tight">{questions.length}</div>
+              <div className="text-[10px] uppercase tracking-wide opacity-80">Questions</div>
+            </div>
+            <div className="rounded-2xl bg-white/15 backdrop-blur border border-white/20 px-4 py-3 text-center min-w-[90px]">
+              <MessageSquare className="h-4 w-4 mx-auto mb-1 opacity-90" />
+              <div className="font-display text-2xl font-bold leading-tight">{totalReplies}</div>
+              <div className="text-[10px] uppercase tracking-wide opacity-80">Replies</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h1 className="font-display text-4xl font-bold">🎭 Anonymous Zone</h1>
-          <p className="text-muted-foreground mt-1">Ask anything. No names. No judgment.</p>
+        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <Sparkles className="h-4 w-4 text-primary" /> A safe space — be kind, stay real.
         </div>
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
