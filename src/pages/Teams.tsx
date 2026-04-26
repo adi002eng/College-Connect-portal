@@ -223,3 +223,13 @@ export default function Teams() {
     </div>
   );
 }
+
+function TeamStat({ icon: Icon, label, val }: { icon: any; label: string; val: number }) {
+  return (
+    <div className="rounded-2xl bg-white/15 backdrop-blur border border-white/20 px-3 py-2.5 text-center min-w-[80px]">
+      <Icon className="h-4 w-4 mx-auto mb-1 opacity-90" />
+      <div className="font-display text-xl font-bold leading-tight">{val}</div>
+      <div className="text-[10px] uppercase tracking-wide opacity-80">{label}</div>
+    </div>
+  );
+}
