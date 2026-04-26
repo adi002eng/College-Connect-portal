@@ -58,6 +58,8 @@ export default function Auth() {
     role: "student" as "student" | "staff",
     skills: "",
   });
+  const [collegeChoice, setCollegeChoice] = useState<string>("");
+  const [otherCollege, setOtherCollege] = useState<string>("");
   const [proofFile, setProofFile] = useState<File | null>(null);
 
   const handleSignIn = async (e: React.FormEvent) => {
