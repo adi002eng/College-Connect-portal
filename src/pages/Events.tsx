@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { Calendar, Plus, MapPin, Loader2, Lock } from "lucide-react";
+import { Calendar, Plus, MapPin, Loader2, Lock, Sparkles, Clock, Users as UsersIcon, GraduationCap } from "lucide-react";
 import { format } from "date-fns";
 import { useRole } from "@/hooks/useRole";
 import { DeleteButton } from "@/components/DeleteButton";
@@ -72,12 +72,35 @@ export default function Events() {
     }
   };
 
+  const upcomingCount = events.filter((e) => e.event_date && new Date(e.event_date) > new Date()).length;
+  const collegeCount = new Set(events.map((e) => e.college).filter(Boolean)).size;
+  const hackCount = events.filter((e) => e.category === "Hackathon").length;
+
   return (
     <div className="space-y-6">
+      {/* Hero */}
+      <section className="rounded-3xl p-6 md:p-10 text-white relative overflow-hidden shadow-elevated" style={{ background: "linear-gradient(135deg, hsl(var(--accent)), hsl(var(--primary)))" }}>
+        <div className="absolute -right-12 -top-12 h-56 w-56 rounded-full bg-white/15 blur-3xl" />
+        <div className="absolute -left-10 -bottom-16 h-64 w-64 rounded-full bg-white/10 blur-3xl" />
+        <div className="relative flex flex-col md:flex-row md:items-end justify-between gap-6">
+          <div>
+            <div className="inline-flex items-center gap-2 rounded-full bg-white/20 backdrop-blur px-3 py-1 text-xs font-medium mb-3">
+              <Sparkles className="h-3.5 w-3.5" /> What's happening on campus
+            </div>
+            <h1 className="font-display text-4xl md:text-5xl font-bold mb-2">🎉 Campus Events</h1>
+            <p className="text-white/90 max-w-xl">Hackathons, fests, workshops · auto-removed after they happen.</p>
+          </div>
+          <div className="grid grid-cols-3 gap-3">
+            <EventStat icon={Clock} label="Upcoming" val={upcomingCount} />
+            <EventStat icon={GraduationCap} label="Colleges" val={collegeCount} />
+            <EventStat icon={UsersIcon} label="Hackathons" val={hackCount} />
+          </div>
+        </div>
+      </section>
+
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h1 className="font-display text-4xl font-bold">🎉 Campus Events</h1>
-          <p className="text-muted-foreground mt-1">Hackathons, fests, workshops · auto-removed after they happen</p>
+        <div className="text-sm text-muted-foreground">
+          Showing <span className="font-semibold text-foreground">{events.length}</span> event{events.length === 1 ? "" : "s"}
         </div>
         {roleLoading ? null : isStaff ? (
         <Dialog open={open} onOpenChange={setOpen}>
