@@ -140,9 +140,10 @@ export default function Profile() {
           <div className="absolute -right-10 -top-10 h-44 w-44 rounded-full bg-white/15 blur-3xl" />
           <div className="absolute -left-10 -bottom-10 h-44 w-44 rounded-full bg-white/10 blur-3xl" />
         </div>
-        <div className="px-6 md:px-8 pb-6 -mt-12 md:-mt-14">
+        <div className="px-6 md:px-8 pb-6 -mt-16 md:-mt-20">
           <div className="flex flex-col md:flex-row md:items-end gap-5">
-            <div className="h-24 w-24 md:h-28 md:w-28 rounded-3xl gradient-hero ring-4 ring-card flex items-center justify-center text-white shadow-elevated shrink-0">
+            <div className="h-24 w-24 md:h-28 md:w-28 rounded-3xl gradient-hero ring-4 ring-card flex items-center justify-center text-white shadow-elevated shrink-0 relative z-10">
+
               {profile?.avatar_url ? (
                 <img src={profile.avatar_url} alt="" className="h-full w-full object-cover rounded-3xl" />
               ) : (
