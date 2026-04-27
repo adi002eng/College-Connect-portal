@@ -140,17 +140,17 @@ export default function Profile() {
           <div className="absolute -right-10 -top-10 h-44 w-44 rounded-full bg-white/15 blur-3xl" />
           <div className="absolute -left-10 -bottom-10 h-44 w-44 rounded-full bg-white/10 blur-3xl" />
         </div>
-        <div className="px-6 md:px-8 pb-6 -mt-16 md:-mt-20">
+        <div className="px-6 md:px-8 pb-6 pt-4 -mt-14 md:-mt-16">
           <div className="flex flex-col md:flex-row md:items-end gap-5">
             <div className="h-24 w-24 md:h-28 md:w-28 rounded-3xl gradient-hero ring-4 ring-card flex items-center justify-center text-white shadow-elevated shrink-0 relative z-10">
-
               {profile?.avatar_url ? (
                 <img src={profile.avatar_url} alt="" className="h-full w-full object-cover rounded-3xl" />
               ) : (
                 <span className="font-display text-4xl font-bold">{(profile?.full_name ?? user?.email ?? "U")[0].toUpperCase()}</span>
               )}
             </div>
-            <div className="flex-1 min-w-0 mt-2 md:mt-0 md:pb-2">
+            <div className="flex-1 min-w-0 md:pb-2">
+
               <h1 className="font-display text-3xl font-bold truncate">{profile?.full_name ?? "Your profile"}</h1>
               <div className="flex items-center gap-1.5 text-sm text-muted-foreground mt-0.5">
                 <Mail className="h-3.5 w-3.5" /> <span className="truncate">{user?.email}</span>
