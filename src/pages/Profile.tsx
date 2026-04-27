@@ -175,7 +175,7 @@ export default function Profile() {
               {profile?.avatar_url ? (
                 <img src={profile.avatar_url} alt="" className="h-full w-full object-cover rounded-3xl" />
               ) : (
-                <span className="font-display text-4xl font-bold">{(profile?.full_name ?? user?.email ?? "U")[0].toUpperCase()}</span>
+                <span className="font-display text-4xl font-bold">{initial(profile?.full_name || user?.email)}</span>
               )}
             </div>
             <div className="flex-1 min-w-0 md:pb-2">
