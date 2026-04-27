@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 import { Loader2, Check, X, Trash2, User as UserIcon, MessageSquare, Upload, ShieldCheck, Mail, GraduationCap, Sparkles, FileText, Calendar, Users as UsersIcon, Send, Inbox } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
@@ -14,7 +15,35 @@ import { useNavigate } from "react-router-dom";
 import { useRole } from "@/hooks/useRole";
 import RoleBadge from "@/components/RoleBadge";
 
+const COLLEGES = [
+  "Women Institute of Technology, Dehradun",
+  "THDC Institute of Hydropower Engineering & Technology, New Tehri",
+  "Institute of Technology, Gopeshwar",
+  "Dr. A.P.J. Abdul Kalam Institute of Technology, Tanakpur",
+  "Nanhi Pari Seemant Institute of Technology, Pithoragarh",
+  "State Institute of Hotel Management & Catering Technology, New Tehri",
+  "Government Institute of Hotel Management, Dehradun",
+  "Government Polytechnic / Technical Campus Uttarkashi",
+  "Veer Chandra Singh Garhwali Govt. Medical Science & Research Institute, Srinagar",
+  "Government Engineering Campus, Dehradun",
+  "Tula's Institute",
+  "Shivalik College of Engineering",
+  "Roorkee Institute of Technology",
+  "College of Engineering Roorkee",
+  "GRD Institute of Management and Technology",
+  "Maya Institute of Technology & Management",
+  "JB Institute of Technology",
+  "Nimbus Academy of Management",
+  "Phonics Group of Institutions",
+  "Kukreja Institute of Hotel Management",
+];
+
 interface Profile { id: string; full_name: string | null; college: string | null; branch: string | null; year: string | null; bio: string | null; avatar_url: string | null; skills?: string | null; }
+
+const initial = (s?: string | null, fallback = "U") => {
+  const v = (s ?? "").trim();
+  return (v.length ? v : fallback).charAt(0).toUpperCase() || "U";
+};
 
 export default function Profile() {
   const { user } = useAuth();
@@ -146,7 +175,7 @@ export default function Profile() {
               {profile?.avatar_url ? (
                 <img src={profile.avatar_url} alt="" className="h-full w-full object-cover rounded-3xl" />
               ) : (
-                <span className="font-display text-4xl font-bold">{(profile?.full_name ?? user?.email ?? "U")[0].toUpperCase()}</span>
+                <span className="font-display text-4xl font-bold">{initial(profile?.full_name || user?.email)}</span>
               )}
             </div>
             <div className="flex-1 min-w-0 md:pb-2">
@@ -228,7 +257,27 @@ export default function Profile() {
         <TabsContent value="info" className="space-y-4 bg-card border border-border/50 rounded-2xl p-6 mt-4">
           <div className="grid md:grid-cols-2 gap-4">
             <div className="space-y-2"><Label>Full name</Label><Input maxLength={100} value={profile?.full_name ?? ""} onChange={(e) => setProfile({ ...profile!, full_name: e.target.value })} /></div>
-            <div className="space-y-2"><Label>College</Label><Input maxLength={120} value={profile?.college ?? ""} onChange={(e) => setProfile({ ...profile!, college: e.target.value })} /></div>
+            <div className="space-y-2">
+              <Label>College</Label>
+              <Select
+                value={profile?.college && COLLEGES.includes(profile.college) ? profile.college : (profile?.college ? "__other__" : "")}
+                onValueChange={(v) => setProfile({ ...profile!, college: v === "__other__" ? "" : v })}
+              >
+                <SelectTrigger><SelectValue placeholder="Select your college" /></SelectTrigger>
+                <SelectContent className="max-h-72">
+                  {COLLEGES.map((c) => (<SelectItem key={c} value={c}>{c}</SelectItem>))}
+                  <SelectItem value="__other__">Other (type below)</SelectItem>
+                </SelectContent>
+              </Select>
+              {(!profile?.college || !COLLEGES.includes(profile.college)) && (
+                <Input
+                  maxLength={150}
+                  placeholder="Enter your college name"
+                  value={profile?.college ?? ""}
+                  onChange={(e) => setProfile({ ...profile!, college: e.target.value })}
+                />
+              )}
+            </div>
             <div className="space-y-2"><Label>Branch</Label><Input maxLength={80} value={profile?.branch ?? ""} onChange={(e) => setProfile({ ...profile!, branch: e.target.value })} placeholder="CSE, ECE, etc." /></div>
             <div className="space-y-2"><Label>Year</Label><Input maxLength={20} value={profile?.year ?? ""} onChange={(e) => setProfile({ ...profile!, year: e.target.value })} placeholder="3rd year" /></div>
           </div>
