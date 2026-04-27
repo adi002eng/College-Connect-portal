@@ -257,7 +257,27 @@ export default function Profile() {
         <TabsContent value="info" className="space-y-4 bg-card border border-border/50 rounded-2xl p-6 mt-4">
           <div className="grid md:grid-cols-2 gap-4">
             <div className="space-y-2"><Label>Full name</Label><Input maxLength={100} value={profile?.full_name ?? ""} onChange={(e) => setProfile({ ...profile!, full_name: e.target.value })} /></div>
-            <div className="space-y-2"><Label>College</Label><Input maxLength={120} value={profile?.college ?? ""} onChange={(e) => setProfile({ ...profile!, college: e.target.value })} /></div>
+            <div className="space-y-2">
+              <Label>College</Label>
+              <Select
+                value={profile?.college && COLLEGES.includes(profile.college) ? profile.college : (profile?.college ? "__other__" : "")}
+                onValueChange={(v) => setProfile({ ...profile!, college: v === "__other__" ? "" : v })}
+              >
+                <SelectTrigger><SelectValue placeholder="Select your college" /></SelectTrigger>
+                <SelectContent className="max-h-72">
+                  {COLLEGES.map((c) => (<SelectItem key={c} value={c}>{c}</SelectItem>))}
+                  <SelectItem value="__other__">Other (type below)</SelectItem>
+                </SelectContent>
+              </Select>
+              {(!profile?.college || !COLLEGES.includes(profile.college)) && (
+                <Input
+                  maxLength={150}
+                  placeholder="Enter your college name"
+                  value={profile?.college ?? ""}
+                  onChange={(e) => setProfile({ ...profile!, college: e.target.value })}
+                />
+              )}
+            </div>
             <div className="space-y-2"><Label>Branch</Label><Input maxLength={80} value={profile?.branch ?? ""} onChange={(e) => setProfile({ ...profile!, branch: e.target.value })} placeholder="CSE, ECE, etc." /></div>
             <div className="space-y-2"><Label>Year</Label><Input maxLength={20} value={profile?.year ?? ""} onChange={(e) => setProfile({ ...profile!, year: e.target.value })} placeholder="3rd year" /></div>
           </div>
