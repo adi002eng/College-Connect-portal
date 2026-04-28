@@ -99,7 +99,23 @@ export default function Admin() {
       ...v,
       profile: profiles?.find((p: any) => p.id === v.user_id) ?? null,
     }));
-    setVerifications(verRows);
+
+    // Surface pending_staff users that don't yet have a staff_verifications row
+    // (e.g. signed up but proof upload was blocked by email confirmation).
+    const verUserIds = new Set(verRows.map((v) => v.user_id));
+    const pendingWithoutProof: VerificationRow[] = rows
+      .filter((u) => u.primary_role === "pending_staff" && !verUserIds.has(u.id))
+      .map((u) => ({
+        id: `pending-${u.id}`,
+        user_id: u.id,
+        proof_url: "",
+        note: u.skills,
+        status: "pending",
+        created_at: u.created_at,
+        profile: { full_name: u.full_name, college: u.college },
+      }));
+
+    setVerifications([...pendingWithoutProof, ...verRows]);
     setLoading(false);
   };
 
@@ -317,6 +333,10 @@ function VerificationCard({
   const [url, setUrl] = useState<string | null>(null);
 
   const view = async () => {
+    if (!v.proof_url) {
+      toast.error("No proof uploaded yet — user signed up but didn't complete upload.");
+      return;
+    }
     const u = await getProofUrl(v.proof_url);
     if (u) {
       setUrl(u);
