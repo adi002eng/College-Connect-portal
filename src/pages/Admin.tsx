@@ -333,6 +333,10 @@ function VerificationCard({
   const [url, setUrl] = useState<string | null>(null);
 
   const view = async () => {
+    if (!v.proof_url) {
+      toast.error("No proof uploaded yet — user signed up but didn't complete upload.");
+      return;
+    }
     const u = await getProofUrl(v.proof_url);
     if (u) {
       setUrl(u);
