@@ -107,7 +107,7 @@ export default function Auth() {
       email: signUpData.email,
       password: signUpData.password,
       options: {
-        emailRedirectTo: `${window.location.origin}/app`,
+        emailRedirectTo: `https://college-connect-hub-vert.vercel.app/auth`,
         data: {
           full_name: signUpData.name,
           college: signUpData.college,
