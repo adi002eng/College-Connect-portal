@@ -159,10 +159,14 @@ export default function Admin() {
     load();
   };
   const deleteUser = async (userId: string) => {
-    if (!confirm("Delete this user's profile and roles? Auth account remains; you can disable it from backend.")) return;
-    const { error } = await supabase.rpc("delete_user_profile", { _user_id: userId });
-    if (error) return toast.error(error.message);
-    toast.success("Profile deleted");
+    if (!confirm("Permanently delete this user and ALL their posts, notes, events, messages, and applications? This cannot be undone.")) return;
+    const { data, error } = await supabase.functions.invoke("admin-delete-user", {
+      body: { user_id: userId },
+    });
+    if (error || (data as any)?.error) {
+      return toast.error(error?.message || (data as any)?.error || "Delete failed");
+    }
+    toast.success("User permanently deleted");
     load();
   };
 
