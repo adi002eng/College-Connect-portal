@@ -293,7 +293,7 @@ export default function Auth() {
                 {signUpData.role === "staff" && (
                   <div className="space-y-2 p-3 bg-muted/50 rounded-xl border border-border">
                     <Label className="flex items-center gap-2">
-                      <Upload className="h-4 w-4" /> Upload college ID / staff proof *
+                      <Upload className="h-4 w-4" /> Upload college ID / faculty proof *
                     </Label>
                     <Input
                       type="file"
