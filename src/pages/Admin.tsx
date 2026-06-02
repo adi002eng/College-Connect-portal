@@ -136,7 +136,7 @@ export default function Admin() {
   const approve = async (userId: string) => {
     const { error } = await supabase.rpc("approve_staff", { _user_id: userId });
     if (error) return toast.error(error.message);
-    toast.success("Staff approved ✅");
+    toast.success("Faculty approved ✅");
     load();
   };
   const reject = async (userId: string) => {
@@ -194,7 +194,7 @@ export default function Admin() {
           <h1 className="font-display text-4xl font-bold flex items-center gap-3">
             <Shield className="h-8 w-8 text-primary" /> Admin Dashboard
           </h1>
-          <p className="text-muted-foreground mt-1">Manage users, verify staff, monitor activity</p>
+          <p className="text-muted-foreground mt-1">Manage users, verify faculty, monitor activity</p>
         </div>
         <Button variant="outline" onClick={load}>
           <RotateCcw className="h-4 w-4 mr-2" /> Refresh
@@ -204,7 +204,7 @@ export default function Admin() {
       <div className="grid grid-cols-2 md:grid-cols-6 gap-3">
         {[
           { label: "Users", value: stats.users },
-          { label: "Verified Staff", value: stats.staff },
+          { label: "Verified Faculty", value: stats.staff },
           { label: "Pending", value: stats.pending },
           { label: "Events", value: stats.events },
           { label: "Notes", value: stats.notes },

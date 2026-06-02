@@ -100,7 +100,7 @@ export default function Auth() {
     }
     signUpData.college = resolvedCollege;
     if (signUpData.role === "staff" && !proofFile) {
-      return toast.error("Upload your college ID/proof to apply as Staff");
+      return toast.error("Upload your college ID/proof to apply as Faculty");
     }
     setLoading(true);
     const { data, error } = await supabase.auth.signUp({
@@ -276,7 +276,7 @@ export default function Auth() {
                           : "border-border hover:bg-muted"
                       }`}
                     >
-                      🛡️ Staff
+                      🛡️ Faculty
                     </button>
                   </div>
                 </div>
@@ -293,7 +293,7 @@ export default function Auth() {
                 {signUpData.role === "staff" && (
                   <div className="space-y-2 p-3 bg-muted/50 rounded-xl border border-border">
                     <Label className="flex items-center gap-2">
-                      <Upload className="h-4 w-4" /> Upload college ID / staff proof *
+                      <Upload className="h-4 w-4" /> Upload college ID / faculty proof *
                     </Label>
                     <Input
                       type="file"
@@ -301,7 +301,7 @@ export default function Auth() {
                       required
                       onChange={(e) => setProofFile(e.target.files?.[0] ?? null)}
                     />
-                    <p className="text-xs text-muted-foreground">Reviewed by admin. You'll get the Staff badge once approved.</p>
+                    <p className="text-xs text-muted-foreground">Reviewed by admin. You'll get the Faculty badge once approved.</p>
                   </div>
                 )}
                 <Button type="submit" disabled={loading} className="w-full gradient-primary text-primary-foreground border-0 h-11">
