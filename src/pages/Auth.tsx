@@ -301,7 +301,7 @@ export default function Auth() {
                       required
                       onChange={(e) => setProofFile(e.target.files?.[0] ?? null)}
                     />
-                    <p className="text-xs text-muted-foreground">Reviewed by admin. You'll get the Staff badge once approved.</p>
+                    <p className="text-xs text-muted-foreground">Reviewed by admin. You'll get the Faculty badge once approved.</p>
                   </div>
                 )}
                 <Button type="submit" disabled={loading} className="w-full gradient-primary text-primary-foreground border-0 h-11">
