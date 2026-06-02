@@ -100,7 +100,7 @@ export default function Auth() {
     }
     signUpData.college = resolvedCollege;
     if (signUpData.role === "staff" && !proofFile) {
-      return toast.error("Upload your college ID/proof to apply as Staff");
+      return toast.error("Upload your college ID/proof to apply as Faculty");
     }
     setLoading(true);
     const { data, error } = await supabase.auth.signUp({
