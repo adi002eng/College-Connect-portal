@@ -218,7 +218,7 @@ export default function Profile() {
         <div className="bg-card border border-border/50 rounded-2xl p-5 space-y-3">
           <div className="flex items-center gap-2">
             <ShieldCheck className="h-5 w-5 text-primary" />
-            <h3 className="font-semibold">Become verified Staff</h3>
+            <h3 className="font-semibold">Become verified Faculty</h3>
           </div>
           {verification?.status === "pending" ? (
             <p className="text-sm text-muted-foreground">
