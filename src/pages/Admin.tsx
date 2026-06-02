@@ -194,7 +194,7 @@ export default function Admin() {
           <h1 className="font-display text-4xl font-bold flex items-center gap-3">
             <Shield className="h-8 w-8 text-primary" /> Admin Dashboard
           </h1>
-          <p className="text-muted-foreground mt-1">Manage users, verify staff, monitor activity</p>
+          <p className="text-muted-foreground mt-1">Manage users, verify faculty, monitor activity</p>
         </div>
         <Button variant="outline" onClick={load}>
           <RotateCcw className="h-4 w-4 mr-2" /> Refresh
