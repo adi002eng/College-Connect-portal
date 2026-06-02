@@ -276,7 +276,7 @@ export default function Auth() {
                           : "border-border hover:bg-muted"
                       }`}
                     >
-                      🛡️ Staff
+                      🛡️ Faculty
                     </button>
                   </div>
                 </div>
