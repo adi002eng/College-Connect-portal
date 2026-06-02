@@ -204,7 +204,7 @@ export default function Admin() {
       <div className="grid grid-cols-2 md:grid-cols-6 gap-3">
         {[
           { label: "Users", value: stats.users },
-          { label: "Verified Staff", value: stats.staff },
+          { label: "Verified Faculty", value: stats.staff },
           { label: "Pending", value: stats.pending },
           { label: "Events", value: stats.events },
           { label: "Notes", value: stats.notes },
