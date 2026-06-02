@@ -234,7 +234,7 @@ export default function Profile() {
             </>
           ) : (
             <>
-              <p className="text-sm text-muted-foreground">Upload your college ID or staff proof. Once admin approves, you'll be able to post events.</p>
+              <p className="text-sm text-muted-foreground">Upload your college ID or faculty proof. Once admin approves, you'll be able to post events.</p>
               <Input type="file" accept="image/*,application/pdf" onChange={(e) => setProofFile(e.target.files?.[0] ?? null)} />
               <Button onClick={submitVerification} disabled={!proofFile || submittingProof} className="gradient-primary text-primary-foreground border-0">
                 {submittingProof ? <Loader2 className="h-4 w-4 animate-spin" /> : <><Upload className="h-4 w-4 mr-2" /> Submit for verification</>}
