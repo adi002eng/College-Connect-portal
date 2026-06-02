@@ -13,7 +13,7 @@ export default function RoleBadge({ role }: { role: AppRole }) {
     case "staff":
       return (
         <Badge className="bg-success text-success-foreground border-0 gap-1">
-          <ShieldCheck className="h-3 w-3" /> Staff
+          <ShieldCheck className="h-3 w-3" /> Faculty
         </Badge>
       );
     case "pending_staff":
