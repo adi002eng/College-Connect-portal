@@ -136,7 +136,7 @@ export default function Admin() {
   const approve = async (userId: string) => {
     const { error } = await supabase.rpc("approve_staff", { _user_id: userId });
     if (error) return toast.error(error.message);
-    toast.success("Staff approved ✅");
+    toast.success("Faculty approved ✅");
     load();
   };
   const reject = async (userId: string) => {
