@@ -124,28 +124,31 @@ export default function Auth() {
       return toast.error(error.message);
     }
 
-    // If staff & we have a session, upload proof + create verification request
+    // If staff role & proof file present, send via edge function (works even
+    // when there's no session yet because email confirmation is enabled).
     if (signUpData.role === "staff" && proofFile && data.user) {
-      // Need a session to upload — sign in if email confirm not required
-      let userId = data.user.id;
-      if (!data.session) {
-        // attempt sign-in to get session for upload (only works if email confirmation off)
-        await supabase.auth.signInWithPassword({
-          email: signUpData.email,
-          password: signUpData.password,
+      try {
+        const file_base64: string = await new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve((reader.result as string).split(",")[1] ?? "");
+          reader.onerror = () => reject(reader.error);
+          reader.readAsDataURL(proofFile);
         });
-      }
-      const ext = proofFile.name.split(".").pop() || "bin";
-      const path = `${userId}/${Date.now()}.${ext}`;
-      const { error: upErr } = await supabase.storage.from("staff-proofs").upload(path, proofFile);
-      if (upErr) {
-        toast.error("Account created, but proof upload failed: " + upErr.message);
-      } else {
-        await supabase.from("staff_verifications").insert({
-          user_id: userId,
-          proof_url: path,
-          note: signUpData.skills || null,
+        const { data: fnRes, error: fnErr } = await supabase.functions.invoke("submit-faculty-proof", {
+          body: {
+            user_id: data.user.id,
+            file_base64,
+            file_name: proofFile.name,
+            note: signUpData.skills || null,
+          },
         });
+        if (fnErr || (fnRes as any)?.error) {
+          toast.error("Account created, but proof upload failed: " + (fnErr?.message || (fnRes as any)?.error));
+        } else {
+          toast.success("Proof uploaded — admin will review shortly.");
+        }
+      } catch (err: any) {
+        toast.error("Proof upload failed: " + err.message);
       }
     }
 
